@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">乐见</string>
+    <string name="app_login">登录</string>
+    <string name="app_register">注册</string>
+    <string name="app_user_profile">用户信息</string>
+    <string name="app_user_setting">用户设置</string>
+    
+    
+    
+    
+    <string name="login_btn">登录</string>
+    <string name="add">添加好友</string>
+    <string name="startlocation">开始定位</string>
+    <string name="stoplocation">停止定位</string>
+    <string name="title_zixun">资讯</string>
+    <string name="group_map">地图</string>
+    <string name="group_conversation">乐见</string>
+    <string name="group_contact">通信录</string>
+    <string name="group_me">我</string>
+    <string name="action_plus">功能</string>
+    <string name="plus_group_chat">发起群聊</string>
+    <string name="plus_add_friend">添加朋友</string>
+    <string name="plus_location_share">位置分享</string>
+    <string name="plus_scan">扫描二维码</string>
+    <string name="register_user">用户名(数字、字母、_组成)</string>
+    <string name="register_password">用户密码</string>
+    <string name="register_email">用户邮箱</string>
+    <string name="register_btn">注册</string>
+    <string name="login_user">用户名</string>
+    <string name="login_password">密码</string>
+
+    <!-- me_fragment -->
+    <string name="username">用户名</string>
+    <string name="setting">设置</string>
+    <string name="logout">退出登录</string>
+
+    <!-- user_profile -->
+    <string name="nickname">昵称</string>
+    <string name="sex">性别</string>
+    <string name="location">地区</string>
+    <string name="none">未知</string>
+
+    <!-- user_setting -->
+    <string name="modify_password">修改密码</string>
+    <string name="about">关于</string>
+
+</resources>

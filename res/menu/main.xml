@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.Leon.lejian.MainActivity" >
+    <item
+        android:id="@+id/action_plus"
+        android:actionProviderClass="com.Leon.lejian.provider.PlusActionProvider"
+        android:icon="@drawable/actionbar_add_icon"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_plus"/>
+
+</menu>

@@ -34,6 +34,12 @@ public class LoginActivity extends Activity implements OnClickListener {
 	EditText password = null;
 	String userNameStr = null;
 	String passwordStr = null;
+	
+	String app_user_nickname = null;
+	String app_user_sex = null;
+	String app_user_address = null;
+	String app_user_signature = null;
+	
 	private HttpUtils httpUtils;
 	public static LoginActivity loginActivity;
 
@@ -89,7 +95,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 											info.getString("message"),
 											Toast.LENGTH_LONG).show();
 									if (info.getString("login").equals("true")) {
-
+										app_user_nickname = info.getString("nickname");
+										app_user_sex = info.getString("sex");
+										app_user_address = info.getString("address");
+										app_user_signature = info.getString("signature");
+										
 										Intent intent = new Intent(
 												LoginActivity.this,
 												MainActivity.class);
@@ -154,6 +164,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 				Constants.SHARE_USERINFO, MODE_PRIVATE);
 		SharedPreferences.Editor edit = share.edit(); // ±à¼­ÎÄ¼þ
 		edit.putString("app_user", userNameStr);
+		
+		edit.putString("app_user_nickname", app_user_nickname);
+		edit.putString("app_user_sex", app_user_sex);
+		edit.putString("app_user_address", app_user_address);
+		edit.putString("app_user_signature", app_user_signature);
 		edit.commit();
 	}
 

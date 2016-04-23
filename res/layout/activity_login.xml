@@ -5,7 +5,7 @@
 
     <EditText
         android:id="@+id/loginPassword"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/loginUser"
         android:layout_below="@+id/loginUser"
@@ -16,7 +16,7 @@
 
     <EditText
         android:id="@+id/loginUser"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -30,7 +30,7 @@
 
     <Button
         android:id="@+id/loginBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/loginUser"
         android:layout_alignRight="@+id/loginPassword"
@@ -40,7 +40,7 @@
 
     <Button
         android:id="@+id/login_registerBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/loginBtn"
         android:layout_alignRight="@+id/loginBtn"

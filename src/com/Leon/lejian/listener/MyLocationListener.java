@@ -1,8 +1,17 @@
 package com.Leon.lejian.listener;
 
 
-import android.util.Log;
+import java.util.Random;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.TestUser;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -12,16 +21,28 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 
 public class MyLocationListener implements BDLocationListener{
 	private BaiduMap mBaiduMap;
 	private boolean isFirstLoc;
 	private MapView mMapView;
+	private Context context;
+	static HttpUtils httpUtils;
+	
 	TestUser testUser;
-	public MyLocationListener(BaiduMap mBaiduMap, MapView mMapView, boolean isFirstLoc) {
+	public MyLocationListener(Context context, BaiduMap mBaiduMap, MapView mMapView, boolean isFirstLoc) {
+		this.context = context;
 		this.mBaiduMap = mBaiduMap;
 		this.isFirstLoc = isFirstLoc;
 		this.mMapView = mMapView;
+		httpUtils = new HttpUtils();
+		httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// 设置超时时间
 	}
 	@Override
 	public void onReceiveLocation(BDLocation location) {
@@ -51,8 +72,8 @@ public class MyLocationListener implements BDLocationListener{
              sb.append("\naddr : ");  
              sb.append(location.getAddrStr());  
           }   
-        
-        Log.e("log", sb.toString());  
+        Log.i("log", sb.toString());  
+        sendLocationToServer(location.getLatitude(), location.getLongitude());
          testUser = TestUser.getInstance();
         testUser.setLocation(location);
         
@@ -62,6 +83,8 @@ public class MyLocationListener implements BDLocationListener{
                 .direction(100).latitude(location.getLatitude())
                 .longitude(location.getLongitude()).build();
         mBaiduMap.setMyLocationData(locData);
+        //发送数据到服务器
+        
         if (isFirstLoc) {
             isFirstLoc = false;
             LatLng ll = new LatLng(location.getLatitude(),
@@ -71,6 +94,45 @@ public class MyLocationListener implements BDLocationListener{
         }
 	}
 	public void onReceivePoi(BDLocation poiLocation) {
+	}
+	
+	public void sendLocationToServer(double latitude, double lontitude){
+		SharedPreferences share = ((Context) context).getSharedPreferences(
+				Constants.SHARE_USERINFO, Context.MODE_PRIVATE);
+//		TODO排除没注册的情况
+		if(share.getString("app_user", "tempUser").equals("tempUser"))
+			return ;
+//		if(share.getString("app_user", null).isEmpty()||(!share.contains("app_user"))){
+//			Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
+//			return ;
+//		}
+		RequestParams params = new RequestParams();
+		JSONObject json = new JSONObject();
+		try {
+			json.put("clientName", share.getString("app_user", "tempUser"));
+			json.put("latitude", latitude);
+			json.put("lontitude", lontitude);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		params.addBodyParameter("location", json.toString());
+//		HttpUtils httpUtils = new HttpUtils();
+//		httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// 设置超时时间
+		httpUtils.send(HttpMethod.POST, Constants.HOST
+				+ Constants.SEND_LOCATION_PATH, params,
+				new RequestCallBack<String>() {
+
+					@Override
+					public void onFailure(HttpException arg0,
+							String arg1) {
+					}
+
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+						Log.i("TEST_REC", "接收到的结果为---》" + arg0.result);
+					}
+				});
 	}
 	
 

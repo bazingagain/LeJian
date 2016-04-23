@@ -47,11 +47,12 @@ public class MapFragment extends Fragment implements OnCheckedChangeListener,
 				false);
 
 		requestLocButton = (Button) view.findViewById(R.id.button_mode);
-		RadioGroup group = (RadioGroup) view.findViewById(R.id.radioGroup);
+//		设置更换marker
+//		RadioGroup group = (RadioGroup) view.findViewById(R.id.radioGroup);
+//		group.setOnCheckedChangeListener(this);
 		mMapView = (MapView) view.findViewById(R.id.bmapView);
 		requestLocButton.setText("普通");
 		requestLocButton.setOnClickListener(this);
-		group.setOnCheckedChangeListener(this);
 		initLocation();
 
 		return view;
@@ -59,24 +60,24 @@ public class MapFragment extends Fragment implements OnCheckedChangeListener,
 
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
-		if (group.getId() == R.id.radioGroup) {
-
-			if (checkedId == R.id.defaulticon) {
-				// 传入null则，恢复默认图标
-				mCurrentMarker = null;
-				mBaiduMap
-						.setMyLocationConfigeration(new MyLocationConfiguration(
-								mCurrentMode, true, null));
-			}
-			if (checkedId == R.id.customicon) {
-				// 修改为自定义marker
-				mCurrentMarker = BitmapDescriptorFactory
-						.fromResource(R.drawable.icon_gcoding);
-				mBaiduMap
-						.setMyLocationConfigeration(new MyLocationConfiguration(
-								mCurrentMode, true, mCurrentMarker));
-			}
-		}
+//		if (group.getId() == R.id.radioGroup) {
+//
+//			if (checkedId == R.id.defaulticon) {
+//				// 传入null则，恢复默认图标
+//				mCurrentMarker = null;
+//				mBaiduMap
+//						.setMyLocationConfigeration(new MyLocationConfiguration(
+//								mCurrentMode, true, null));
+//			}
+//			if (checkedId == R.id.customicon) {
+//				// 修改为自定义marker
+//				mCurrentMarker = BitmapDescriptorFactory
+//						.fromResource(R.drawable.icon_gcoding);
+//				mBaiduMap
+//						.setMyLocationConfigeration(new MyLocationConfiguration(
+//								mCurrentMode, true, mCurrentMarker));
+//			}
+//		}
 	}
 
 	@Override
@@ -110,13 +111,13 @@ public class MapFragment extends Fragment implements OnCheckedChangeListener,
 		mBaiduMap.setMyLocationEnabled(true);
 		// 定位初始化
 		mLocClient = new LocationClient(context);
-		mLocClient.registerLocationListener(new MyLocationListener(mBaiduMap,
+		mLocClient.registerLocationListener(new MyLocationListener(getActivity(),mBaiduMap,
 				mMapView, true));
 		LocationClientOption option = new LocationClientOption();
 		option.setOpenGps(true);// 打开gps
 		option.setAddrType("all");// 返回的定位结果包含地址信息
 		option.setCoorType("bd09ll"); // 设置坐标类型
-		option.setScanSpan(1000);
+		option.setScanSpan(2000);
 		mLocClient.setLocOption(option);
 		mLocClient.start();
 	}

@@ -37,13 +37,20 @@
     <string name="logout">退出登录</string>
 
     <!-- user_profile -->
+    <string name="icon">头像</string>
     <string name="nickname">昵称</string>
     <string name="sex">性别</string>
+    <string name="two_dimension_code">二维码名片</string>
     <string name="location">地区</string>
-    <string name="none">未知</string>
+    <string name="none">未设置</string>
+    <string name="signature">个性签名</string>
+    <!-- user/signature -->
+    <string name="save">保存</string>
+    
 
     <!-- user_setting -->
     <string name="modify_password">修改密码</string>
+    <string name="feedback">反馈</string>
     <string name="about">关于</string>
 
 </resources>

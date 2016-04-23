@@ -5,7 +5,7 @@
 
     <EditText
         android:id="@+id/registerName"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -16,7 +16,7 @@
 
     <EditText
         android:id="@+id/RegisterPassword"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/registerName"
         android:layout_alignRight="@+id/registerName"
@@ -31,7 +31,7 @@
 
     <EditText
         android:id="@+id/registerEmail"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/RegisterPassword"
         android:layout_alignRight="@+id/RegisterPassword"
@@ -42,7 +42,7 @@
 
     <Button
         android:id="@+id/registerBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/registerEmail"
         android:layout_centerHorizontal="true"

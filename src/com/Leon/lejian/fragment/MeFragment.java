@@ -40,7 +40,7 @@ public class MeFragment extends Fragment implements OnClickListener {
 		userName = (TextView) view.findViewById(R.id.user_name);
 		SharedPreferences share = getActivity().getSharedPreferences(
 				Constants.SHARE_USERINFO, Context.MODE_PRIVATE);
-		userName.setText(share.getString("app_user", "用户名"));
+		userName.setText(check(share.getString("app_user", null))?"用户名":share.getString("app_user", null));
 		userProfile = (LinearLayout) view.findViewById(R.id.user_profile);
 		userProfile.setOnClickListener(this);
 		userSetting = (LinearLayout) view.findViewById(R.id.user_setting);
@@ -48,6 +48,20 @@ public class MeFragment extends Fragment implements OnClickListener {
 		userLogout = (LinearLayout) view.findViewById(R.id.user_logout);
 		userLogout.setOnClickListener(this);
 	}
+	
+	private boolean check(String str){
+		if(str ==null || str.length()==0)
+			return true;
+		return false;
+	}
+	@Override
+	public void onResume() {
+		super.onResume();
+		SharedPreferences share = getActivity().getSharedPreferences(
+				Constants.SHARE_USERINFO, Context.MODE_PRIVATE);
+		userName.setText(check(share.getString("app_user", null))?"用户名":share.getString("app_user", null));
+	}
+
 
 	@Override
 	public void onClick(View v) {

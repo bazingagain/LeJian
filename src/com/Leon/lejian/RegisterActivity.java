@@ -137,6 +137,11 @@ public class RegisterActivity extends Activity implements OnClickListener {
 				Constants.SHARE_USERINFO, MODE_PRIVATE);
 		SharedPreferences.Editor edit = share.edit(); // ±à¼­ÎÄ¼þ
 		edit.putString("app_user", user);
+		
+		edit.putString("app_user_nickname", null);
+		edit.putString("app_user_sex", null);
+		edit.putString("app_user_address", null);
+		edit.putString("app_user_signature", null);
 		edit.commit();
 	}
 	

@@ -9,7 +9,7 @@
         android:layout_height="fill_parent"
         android:clickable="true" />
 
-    <LinearLayout
+    <!-- <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -41,7 +41,7 @@
             </RadioButton>
         </RadioGroup>
     </LinearLayout>
-
+ -->
     <Button
         android:id="@+id/button_mode"
         android:layout_width="wrap_content"

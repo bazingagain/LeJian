@@ -17,6 +17,10 @@
             android:text="@string/username" />
 
     </LinearLayout>
+    <View 
+        android:layout_height="1dip" 
+        android:layout_width="fill_parent"
+        android:background="#FF909090"/>
 
     <LinearLayout
         android:id="@+id/user_setting"
@@ -31,6 +35,10 @@
             android:text="@string/setting" />
 
     </LinearLayout>
+    <View 
+        android:layout_height="1dip" 
+        android:layout_width="fill_parent"
+        android:background="#FF909090"/>
 
     <LinearLayout
         android:id="@+id/user_logout"

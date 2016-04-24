@@ -164,7 +164,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				Constants.SHARE_USERINFO, MODE_PRIVATE);
 		SharedPreferences.Editor edit = share.edit(); // ±à¼­ÎÄ¼þ
 		edit.putString("app_user", userNameStr);
-		
+		edit.putString("app_user_password", passwordStr);
 		edit.putString("app_user_nickname", app_user_nickname);
 		edit.putString("app_user_sex", app_user_sex);
 		edit.putString("app_user_address", app_user_address);

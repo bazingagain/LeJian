@@ -47,10 +47,59 @@
     <!-- user/signature -->
     <string name="save">保存</string>
     
+    <!-- address -->
+    <string name="anhui">安徽</string>
+    <string name="aomen">澳门</string>
+    <string name="chongqing">重庆</string>
+    <string name="beijing">北京</string>
+    <string name="fujian">福建</string>
+    <string name="guangdong">广东</string>
+    <string name="gansu">甘肃</string>
+    <string name="guangxi">广西</string>
+    <string name="guizhou">贵州</string>
+    <string name="hebei">河北</string>
+    <string name="hubei">湖北</string>
+    <string name="heilongjiang">黑龙江</string>
+    <string name="hainan">海南</string>
+    <string name="henan">河南</string>
+    <string name="hunan">湖南</string>
+    <string name="jilin">吉林</string>
+    <string name="jiangsu">江苏</string>
+    <string name="jiangxi">江西</string>
+    <string name="liaoning">辽宁</string>
+    <string name="neimenggu">内蒙古</string>
+    <string name="ningxia">宁夏</string>
+    <string name="qinghai">青海</string>
+    <string name="sichuan">四川</string>
+    <string name="shandong">山东</string>
+    <string name="shanghai">上海</string>
+    <string name="shanxi_shan">陕西</string>
+    <string name="shanxi_jin">山西</string>
+    <string name="tianjin">天津</string>
+    <string name="taiwan">台湾</string>
+    <string name="xizang">西藏</string>
+    <string name="xianggang">香港</string>
+    <string name="xinjiang">新疆</string>
+    <string name="yunnan">云南</string>
+    <string name="zhejiang">浙江</string>
+    
 
     <!-- user_setting -->
     <string name="modify_password">修改密码</string>
     <string name="feedback">反馈</string>
     <string name="about">关于</string>
-
+    
+    <!--modify_password  -->
+    <string name="old_password">密码</string>
+    <string name="new_password">新密码</string>
+    <string name="modify">修改</string>
+    <!-- feedback -->
+    <string name="send_feedback">提交</string>
+    <string name="send_feedback_hint">请输入您要反馈的问题，乐见会尽快回复您,(づ￣ 3￣)づ</string>
+    
+    <!-- about -->
+	<string name="about_content">乐见是一款实时位置分享APP，可以通过好友、短信、微信、QQ等方式向他人分享自己的实时运动轨迹，可以查看一个或多个他人的位置轨迹。乐见提供极简的用户界面，及实用的位置分享功能。</string>
+	<string name="about_author">作者：bazingagain 版权所有</string>
+	<string name="about_copyright">Copyright © 2016 LeJian</string>
+	<string name="about_allrights">All Rights Reserved</string>
 </resources>

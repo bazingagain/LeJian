@@ -171,8 +171,24 @@
         </activity>
         
         <activity
+            android:name="com.Leon.lejian.AddressActivity"
+            android:label="@string/location" >
+        </activity>
+        <activity
             android:name="com.Leon.lejian.SignatureActivity"
             android:label="@string/signature" >
+        </activity>
+        <activity
+            android:name="com.Leon.lejian.AboutActivity"
+            android:label="@string/about" >
+        </activity>
+        <activity
+            android:name="com.Leon.lejian.ModifyPasswordActivity"
+            android:label="@string/modify_password" >
+        </activity>
+        <activity
+            android:name="com.Leon.lejian.FeedbackActivity"
+            android:label="@string/feedback" >
         </activity>
         
         <!-- Required SDK核心功能-->

@@ -4,53 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <ListView
+        android:id="@+id/contact_listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center" >
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical"
-                android:text="@string/app_name"
-                android:textSize="@dimen/contact_textietm_size" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center" >
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical"
-                android:text="@string/app_name"
-                android:textSize="@dimen/contact_textietm_size" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center" >
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="44dp"
-                android:gravity="center_vertical"
-                android:text="@string/app_name"
-                android:textSize="@dimen/contact_textietm_size" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+        android:layout_height="wrap_content" >
+    </ListView>
 
 </LinearLayout>

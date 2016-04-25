@@ -190,6 +190,14 @@
             android:name="com.Leon.lejian.FeedbackActivity"
             android:label="@string/feedback" >
         </activity>
+        <activity
+            android:name="com.Leon.lejian.FriendProfileActivity"
+            android:label="@string/detail" >
+        </activity>
+        <activity
+            android:name="com.Leon.lejian.AddNotificationActivity"
+            android:label="@string/notification" >
+        </activity>
         
         <!-- Required SDK核心功能-->
         <activity

@@ -4,6 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.bean.FriendUser;
+import com.Leon.lejian.helper.FriendDatabaseHelper;
+import com.Leon.lejian.service.DatabaseService;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -12,8 +15,11 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,13 +31,16 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 	private Button findBtn = null;
 	private EditText findUserName = null;
 	private String friendName = null;
+	private FriendUser tempFriendInfo = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_friend);
 		initView();
 	}
-	private void initView(){
+
+	private void initView() {
 		findBtn = (Button) findViewById(R.id.findBtn);
 		findBtn.setOnClickListener(this);
 		findUserName = (EditText) findViewById(R.id.find_username);
@@ -41,16 +50,28 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		if (v.getId() == R.id.findBtn) {
 			friendName = findUserName.getText().toString().trim();
-			if(friendName.isEmpty()){
+			if (friendName.isEmpty()) {
 				Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show();
-				return ;
-			}else{
+				return;
+			} else {
 				try {
 					SharedPreferences share = getSharedPreferences(
 							Constants.SHARE_USERINFO, MODE_PRIVATE);
-					if(share.getString("app_user", null).isEmpty()||(!share.contains("app_user"))){
+					if (share.getString("app_user", null).isEmpty()
+							|| (!share.contains("app_user"))) {
 						Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
-						return ;
+						return;
+					}
+					// 本地检查要添加的朋友是否已在本地数据库中
+					if (checkLocalHasFriendDatabase(friendName)) {
+						Intent intent = new Intent(this,
+								FriendProfileActivity.class);
+						Bundle bundle = new Bundle();
+						FriendUser friendUser = new FriendUser(tempFriendInfo.getName(), tempFriendInfo.getNickname(), tempFriendInfo.getPic_url(), tempFriendInfo.getSex(), tempFriendInfo.getAddress(), tempFriendInfo.getSignature());
+						bundle.putSerializable("friend", friendUser);
+						intent.putExtra("showRequstUserInfo", bundle);
+						startActivity(intent);
+						return;
 					}
 					RequestParams params = new RequestParams();
 					JSONObject json = new JSONObject();
@@ -66,24 +87,28 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 								@Override
 								public void onFailure(HttpException arg0,
 										String arg1) {
-									Toast.makeText(getApplicationContext(), "添加失败",
-											Toast.LENGTH_LONG).show();
+									Toast.makeText(getApplicationContext(),
+											"添加请求发送失败", Toast.LENGTH_SHORT).show();
 								}
 
 								@Override
 								public void onSuccess(ResponseInfo<String> arg0) {
-									Log.i("TEST_REC", "接收到的结果为---》" + arg0.result);
+									Log.i("TEST_REC", "接收到的结果为---》"
+											+ arg0.result);
 									try {
-										JSONObject json = new JSONObject(arg0.result);
-										Toast.makeText(getApplicationContext(), json.getString("message"), Toast.LENGTH_SHORT).show();
-										if(json.getString("add").equals("true")){
-											Log.d(Constants.DEBUG, "添加用户成功");
-											//TODO  更新好友通讯录
+										JSONObject json = new JSONObject(
+												arg0.result);
+										Toast.makeText(getApplicationContext(),
+												json.getString("message"),
+												Toast.LENGTH_SHORT).show();
+										if (json.getString("add")
+												.equals("true")) {
+											Log.d(Constants.DEBUG, "添加请求发送成功");
 										}
 									} catch (JSONException e) {
 										e.printStackTrace();
 									}
-									
+
 								}
 							});
 				} catch (JSONException e1) {
@@ -91,5 +116,18 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 				}
 			}
 		}
+	}
+
+	private boolean checkLocalHasFriendDatabase(String friendName) {
+		DatabaseService dbService = new DatabaseService(this);
+		dbService.createFriendTable();
+		tempFriendInfo = dbService.findFriendInfo(friendName);
+		dbService.close();
+		if (tempFriendInfo == null) {
+			return false;
+		} else {
+			return true;
+		}
+
 	}
 }

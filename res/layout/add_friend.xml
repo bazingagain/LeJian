@@ -7,11 +7,12 @@
         android:id="@+id/find_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="82dp"
-        android:hint="@string/login_user"
         android:ems="10"
+        android:hint="@string/login_user"
         android:inputType="textPersonName" >
 
         <requestFocus />

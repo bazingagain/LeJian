@@ -82,7 +82,11 @@
     <string name="xinjiang">新疆</string>
     <string name="yunnan">云南</string>
     <string name="zhejiang">浙江</string>
+    <!-- friend profile -->
     
+    <string name="detail">详细资料</string>
+    <string name="notification">通知</string>
+    <string name="agree">确认</string>
 
     <!-- user_setting -->
     <string name="modify_password">修改密码</string>

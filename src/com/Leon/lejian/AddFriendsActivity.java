@@ -49,19 +49,23 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.findBtn) {
+			SharedPreferences share = getSharedPreferences(
+					Constants.SHARE_USERINFO, MODE_PRIVATE);
+			if ((!share.contains("app_user")) || share.getString("app_user", null) == null) {
+				Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
+				return;
+			}
 			friendName = findUserName.getText().toString().trim();
-			if (friendName.isEmpty()) {
+			if (friendName == null ||friendName.isEmpty()) {
 				Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show();
 				return;
-			} else {
+			} 
+			else if(share.getString("app_user", null).equals(friendName)){
+				Toast.makeText(this, "不能添加自己为好友", Toast.LENGTH_SHORT).show();
+				return ;
+			}
+			else {
 				try {
-					SharedPreferences share = getSharedPreferences(
-							Constants.SHARE_USERINFO, MODE_PRIVATE);
-					if (share.getString("app_user", null).isEmpty()
-							|| (!share.contains("app_user"))) {
-						Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
-						return;
-					}
 					// 本地检查要添加的朋友是否已在本地数据库中
 					if (checkLocalHasFriendDatabase(friendName)) {
 						Intent intent = new Intent(this,
@@ -88,7 +92,7 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 								public void onFailure(HttpException arg0,
 										String arg1) {
 									Toast.makeText(getApplicationContext(),
-											"添加请求发送失败", Toast.LENGTH_SHORT).show();
+											"已发送，等待用户同意", Toast.LENGTH_SHORT).show();
 								}
 
 								@Override

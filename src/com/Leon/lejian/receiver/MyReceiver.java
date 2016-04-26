@@ -1,8 +1,11 @@
 package com.Leon.lejian.receiver;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.Leon.lejian.AddNotificationActivity;
+import com.Leon.lejian.MainActivity;
+import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.FriendUser;
 
 import cn.jpush.android.api.JPushInterface;
@@ -65,6 +68,22 @@ public class MyReceiver extends BroadcastReceiver {
 		Log.d(TAG, "message : " + message);
 		String extras = bundle.getString(JPushInterface.EXTRA_EXTRA);
 		Log.d(TAG, "extras : " + extras);
+		JSONObject extrasJson;
+		try {
+			extrasJson = new JSONObject(extras);
+			if (extrasJson.getString("type").equals("agree")) {
+				FriendUser friendUser = new FriendUser(
+						extrasJson.getString("friend_name"),
+						extrasJson.getString("friend_nickname"),
+						extrasJson.getString("pic_url"),
+						extrasJson.getString("friend_sex"),
+						extrasJson.getString("friend_address"),
+						extrasJson.getString("friend_signature"));
+				Constants.contactUserList.add(friendUser);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void openNotification(Context context, Bundle bundle) {
@@ -72,13 +91,29 @@ public class MyReceiver extends BroadcastReceiver {
 		String extras = bundle.getString(JPushInterface.EXTRA_EXTRA);
 		try {
 			JSONObject extrasJson = new JSONObject(extras);
-			Intent intent = new Intent(context, AddNotificationActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
-			Bundle friendBundle = new Bundle();
-			FriendUser friendUser = new FriendUser(extrasJson.getString("friend_name"),extrasJson.getString("friend_nickname"), extrasJson.getString("pic_url"), extrasJson.getString("friend_sex"), extrasJson.getString("friend_address"), extrasJson.getString("friend_signature"));
-			friendBundle.putSerializable("friend", friendUser);
-			intent.putExtra("requserAddFriend", friendBundle);
-			context.startActivity(intent);
+			if (extrasJson.getString("type").equals("add")) {
+				Intent intent = new Intent(context,
+						AddNotificationActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				Bundle friendBundle = new Bundle();
+				FriendUser friendUser = new FriendUser(
+						extrasJson.getString("friend_name"),
+						extrasJson.getString("friend_nickname"),
+						extrasJson.getString("pic_url"),
+						extrasJson.getString("friend_sex"),
+						extrasJson.getString("friend_address"),
+						extrasJson.getString("friend_signature"));
+				friendBundle.putSerializable("friend", friendUser);
+				intent.putExtra("requserAddFriend", friendBundle);
+				context.startActivity(intent);
+			} else if (extrasJson.getString("type").equals("agree")) {
+				Intent intent = new Intent(context, MainActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				Bundle fragmentBundle = new Bundle();
+				fragmentBundle.putString("fragment", "contactFragment");
+				intent.putExtra("fragment", fragmentBundle);
+				context.startActivity(intent);
+			}
 		} catch (Exception e) {
 			Log.w(TAG, "Unexpected: extras is not a valid json", e);
 			return;

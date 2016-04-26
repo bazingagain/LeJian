@@ -10,7 +10,7 @@ import android.net.NetworkInfo;
 import com.Leon.lejian.bean.FriendUser;
 
 public class Constants {
-	public static final String HOST = "HTTP://172.19.175.18/myla/public";
+	public static final String HOST = "HTTP://125.82.62.79/myla/public";
 	public static final String REGISTER_PATH = "/userRegister";
 	public static final String LOGIN_PATH = "/userLogin";
 	public static final String ADD_PATH = "/userAdd";

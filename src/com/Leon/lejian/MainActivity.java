@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import android.app.ActivityManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.ExifInterface;
 import android.os.Bundle;
@@ -37,19 +38,26 @@ public class MainActivity extends FragmentActivity implements
 	FragmentManager manager = getSupportFragmentManager();
 	FragmentTransaction transaction;
 	public static LocalUser localUser = null;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		//百度地图窗口初始化
+		// requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// 百度地图窗口初始化
 		SDKInitializer.initialize(getApplicationContext());
 		setContentView(R.layout.activity_main);
-		
+
 		setOverflowShowingAlways();
 		radioGroup = (RadioGroup) findViewById(R.id.radio_group_bottom);
 		radioGroup.setOnCheckedChangeListener(this);
-
-		fragment = new MapFragment(getApplicationContext());
+		Intent intent = getIntent();
+		Bundle bundle = intent.getBundleExtra("fragment");
+		if (bundle == null) {
+			fragment = new MapFragment(getApplicationContext());
+		}
+		else if(bundle.getString("fragment").equals("contactFragment")){
+			fragment = new ContactFragment();
+		}
 		transaction(fragment);
 	}
 
@@ -58,27 +66,28 @@ public class MainActivity extends FragmentActivity implements
 		transaction.replace(R.id.container, fragment);
 		transaction.commit();
 	}
-	
-//	private void initUserInfo(){
-//		SharedPreferences share = getSharedPreferences(Constants.SHARE_USERINFO, MODE_PRIVATE); 
-//		if(share.contains("app_user")){
-//			
-//		}else{
-//			SharedPreferences.Editor edit = share.edit(); //编辑文件  
-//			edit.putString("app_user", )
-//		}
-//	}
+
+	// private void initUserInfo(){
+	// SharedPreferences share = getSharedPreferences(Constants.SHARE_USERINFO,
+	// MODE_PRIVATE);
+	// if(share.contains("app_user")){
+	//
+	// }else{
+	// SharedPreferences.Editor edit = share.edit(); //编辑文件
+	// edit.putString("app_user", )
+	// }
+	// }
 
 	@Override
 	protected void onPause() {
-//		mMapView.onPause();
+		// mMapView.onPause();
 		super.onPause();
 		JPushInterface.onPause(this);
 	}
 
 	@Override
 	protected void onResume() {
-//		mMapView.onResume();
+		// mMapView.onResume();
 		super.onResume();
 		JPushInterface.onResume(this);
 	}
@@ -86,15 +95,13 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onDestroy() {
 		// 退出时销毁定位
-//		mLocClient.stop();
-//		// 关闭定位图层
-//		mBaiduMap.setMyLocationEnabled(false);
-//		mMapView.onDestroy();
-//		mMapView = null;
+		// mLocClient.stop();
+		// // 关闭定位图层
+		// mBaiduMap.setMyLocationEnabled(false);
+		// mMapView.onDestroy();
+		// mMapView = null;
 		super.onDestroy();
 	}
-	
-	
 
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -116,41 +123,40 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
-
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);  
-        return true;  
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
 	}
-	 @Override  
-	    public boolean onMenuOpened(int featureId, Menu menu) {  
-	        if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {  
-	            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {  
-	                try {  
-	                    Method m = menu.getClass().getDeclaredMethod(  
-	                            "setOptionalIconsVisible", Boolean.TYPE);  
-	                    m.setAccessible(true);  
-	                    m.invoke(menu, true);  
-	                } catch (Exception e) {  
-	                }  
-	            }  
-	        }  
-	        return super.onMenuOpened(featureId, menu);  
-	    }
-	 
-	 private void setOverflowShowingAlways() {  
-	        try {  
-	        	
-	        	//Field  rflect  
-	            ViewConfiguration config = ViewConfiguration.get(this);  
-	            Field menuKeyField = ViewConfiguration.class  
-	                    .getDeclaredField("sHasPermanentMenuKey");  
-	            menuKeyField.setAccessible(true);  
-	            menuKeyField.setBoolean(config, false);  
-	        } catch (Exception e) {  
-	            e.printStackTrace();  
-	        }  
-	    }  
+
+	@Override
+	public boolean onMenuOpened(int featureId, Menu menu) {
+		if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
+			if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+				try {
+					Method m = menu.getClass().getDeclaredMethod(
+							"setOptionalIconsVisible", Boolean.TYPE);
+					m.setAccessible(true);
+					m.invoke(menu, true);
+				} catch (Exception e) {
+				}
+			}
+		}
+		return super.onMenuOpened(featureId, menu);
+	}
+
+	private void setOverflowShowingAlways() {
+		try {
+
+			// Field rflect
+			ViewConfiguration config = ViewConfiguration.get(this);
+			Field menuKeyField = ViewConfiguration.class
+					.getDeclaredField("sHasPermanentMenuKey");
+			menuKeyField.setAccessible(true);
+			menuKeyField.setBoolean(config, false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

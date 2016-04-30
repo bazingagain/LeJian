@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.ViewConfiguration;
 import android.view.Window;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.data.JPushView;
@@ -26,6 +27,7 @@ import com.Leon.lejian.bean.LocalUser;
 import com.Leon.lejian.fragment.ContactFragment;
 import com.Leon.lejian.fragment.MapFragment;
 import com.Leon.lejian.fragment.MeFragment;
+import com.Leon.lejian.fragment.ShareNotificationFragment;
 import com.baidu.mapapi.SDKInitializer;
 
 public class MainActivity extends FragmentActivity implements
@@ -38,9 +40,28 @@ public class MainActivity extends FragmentActivity implements
 	FragmentManager manager = getSupportFragmentManager();
 	FragmentTransaction transaction;
 	public static LocalUser localUser = null;
+	/**
+	 * 检查是否登录
+	 * @return
+	 */
+	private boolean checkIsLogin(){
+		SharedPreferences share = getSharedPreferences(
+				Constants.SHARE_USERINFO, MODE_PRIVATE);
+		if ((!share.contains("app_user")) || share.getString("app_user", null) == null) {
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
+		if(!checkIsLogin()){
+			Intent intent = new Intent(this, LoginActivity.class);
+			startActivity(intent);
+			finish();
+		}
+		
 		super.onCreate(savedInstanceState);
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// 百度地图窗口初始化
@@ -57,6 +78,8 @@ public class MainActivity extends FragmentActivity implements
 		}
 		else if(bundle.getString("fragment").equals("contactFragment")){
 			fragment = new ContactFragment();
+		}else if(bundle.getString("fragment").equals("shareNotificationFragment")){
+			fragment = new ShareNotificationFragment();
 		}
 		transaction(fragment);
 	}
@@ -66,17 +89,6 @@ public class MainActivity extends FragmentActivity implements
 		transaction.replace(R.id.container, fragment);
 		transaction.commit();
 	}
-
-	// private void initUserInfo(){
-	// SharedPreferences share = getSharedPreferences(Constants.SHARE_USERINFO,
-	// MODE_PRIVATE);
-	// if(share.contains("app_user")){
-	//
-	// }else{
-	// SharedPreferences.Editor edit = share.edit(); //编辑文件
-	// edit.putString("app_user", )
-	// }
-	// }
 
 	@Override
 	protected void onPause() {
@@ -110,7 +122,7 @@ public class MainActivity extends FragmentActivity implements
 				fragment = new MapFragment(this.getApplicationContext());
 
 			} else if (checkedId == R.id.radio_tushang) {
-				fragment = new ContactFragment();
+				fragment = new ShareNotificationFragment();
 
 			} else if (checkedId == R.id.radio_luntan) {
 				fragment = new ContactFragment();

@@ -137,11 +137,11 @@ public class MapFragment extends Fragment implements OnCheckedChangeListener,
 	@Override
 	public void onDestroy() {
 		// 退出时销毁定位
-		mLocClient.stop();
+//		mLocClient.stop();
 		// 关闭定位图层
-		mBaiduMap.setMyLocationEnabled(false);
-		mMapView.onDestroy();
-		mMapView = null;
+//		mBaiduMap.setMyLocationEnabled(false);
+//		mMapView.onDestroy();
+//		mMapView = null;
 		super.onDestroy();
 	}
 

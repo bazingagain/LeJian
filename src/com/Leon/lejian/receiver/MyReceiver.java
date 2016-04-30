@@ -4,7 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.Leon.lejian.AddNotificationActivity;
+import com.Leon.lejian.ContactProfileActivity;
 import com.Leon.lejian.MainActivity;
+import com.Leon.lejian.ShareLocationActivity;
 import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.FriendUser;
 
@@ -81,6 +83,58 @@ public class MyReceiver extends BroadcastReceiver {
 						extrasJson.getString("friend_signature"));
 				Constants.contactUserList.add(friendUser);
 			}
+			else if (extrasJson.getString("type").equals("add")) {
+				FriendUser friendUser = new FriendUser(
+						extrasJson.getString("friend_name"),
+						extrasJson.getString("friend_nickname"),
+						extrasJson.getString("pic_url"),
+						extrasJson.getString("friend_sex"),
+						extrasJson.getString("friend_address"),
+						extrasJson.getString("friend_signature"));
+				Constants.requestUserList.add(friendUser);
+			}else if(extrasJson.getString("type").equals("requestShareLoc")){
+				//接到别人的共享位置请求  则添加这个共享到共享List中
+				for(int i= 0; i < Constants.requestShareUserList.size(); i++){
+					if(extrasJson.getString("friend_name").equals(Constants.requestShareUserList.get(i).getName())){
+						//请求list中已有这个请求 (则不能再 添加这个共享)
+						return ;
+					}
+				}
+				//TODO  更新 requestSharNiti的listview
+				FriendUser friendUser = new FriendUser(
+						extrasJson.getString("friend_name"),
+						extrasJson.getString("friend_nickname"),
+						extrasJson.getString("pic_url"),
+						extrasJson.getString("friend_sex"),
+						extrasJson.getString("friend_address"),
+						extrasJson.getString("friend_signature"));
+				friendUser.setStatus_share(Constants.OTHER_REQUEST_SELF);
+				Constants.requestShareUserList.add(friendUser);
+				
+			}
+			else if(extrasJson.getString("type").equals("agreeShareLoc")){
+				//接收到对方同意 自己的共享位置请求 (在 共享位置Activity里，实时获取并显示好友的位置)
+				//TODO  不显示为可见的通知()
+//				FriendUser friendUser = new FriendUser(
+//						extrasJson.getString("friend_name"),
+//						extrasJson.getString("friend_nickname"),
+//						extrasJson.getString("pic_url"),
+//						extrasJson.getString("friend_sex"),
+//						extrasJson.getString("friend_address"),
+//						extrasJson.getString("friend_signature"));
+//				friendUser.setStatus_share(Constants.SELF_REQUEST_OTHER);
+				for(int i= 0; i < Constants.requestShareUserList.size(); i++){
+					if(extrasJson.getString("friend_name").equals(Constants.requestShareUserList.get(i).getName())){
+						//TODO请求list中已有这个请求， 则刷新 这个ShareLocactivity的好友的位置(开启获取这个用户的位置)
+						//只有接到别人的同意共享之后，才可以获取别人的信息
+						Constants.requestShareUserList.get(i).setStatus_share(Constants.SELF_REQUEST_OTHER);
+						Constants.requestShareUserList.get(i).setStatus_agree(Constants.OTHER_AGREE_SHARE);;
+						return ;
+					}
+				}
+				//list请求中没有,说明自己已经取消了这个 共享位置， 则 DO Nothing 
+				return;
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -95,16 +149,8 @@ public class MyReceiver extends BroadcastReceiver {
 				Intent intent = new Intent(context,
 						AddNotificationActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				Bundle friendBundle = new Bundle();
-				FriendUser friendUser = new FriendUser(
-						extrasJson.getString("friend_name"),
-						extrasJson.getString("friend_nickname"),
-						extrasJson.getString("pic_url"),
-						extrasJson.getString("friend_sex"),
-						extrasJson.getString("friend_address"),
-						extrasJson.getString("friend_signature"));
-				friendBundle.putSerializable("friend", friendUser);
-				intent.putExtra("requserAddFriend", friendBundle);
+				
+				//假如在ADDNotifition下，要更新  AddNotification的 listview
 				context.startActivity(intent);
 			} else if (extrasJson.getString("type").equals("agree")) {
 				Intent intent = new Intent(context, MainActivity.class);
@@ -113,6 +159,28 @@ public class MyReceiver extends BroadcastReceiver {
 				fragmentBundle.putString("fragment", "contactFragment");
 				intent.putExtra("fragment", fragmentBundle);
 				context.startActivity(intent);
+			}else if(extrasJson.getString("type").equals("requestShareLoc")){
+				//接收到好友对自己的 共享位置请求  (进入共享位置Activity， 实时请求 好友的实时位置)
+				//同意共享，则进入 ShareLocationAcitvity  显示两个人的 位置信息
+				FriendUser requestShareUser = new FriendUser(
+						extrasJson.getString("friend_name"),
+						extrasJson.getString("friend_nickname"),
+						extrasJson.getString("pic_url"),
+						extrasJson.getString("friend_sex"),
+						extrasJson.getString("friend_address"),
+						extrasJson.getString("friend_signature"));
+				//直接跳转到 sharenotifragment
+				Intent intent = new Intent(context, MainActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				Bundle shareBundle = new Bundle();
+				shareBundle.putString("fragment", "shareNotificationFragment");
+				intent.putExtra("fragment", shareBundle);
+				context.startActivity(intent);
+				
+			}else if(extrasJson.getString("type").equals("agreeShareLoc")){
+				//接收到对方同意 自己的共享位置请求 (在 共享位置Activity里，实时获取并显示好友的位置)
+				//TODO  不显示为可见的通知
+				
 			}
 		} catch (Exception e) {
 			Log.w(TAG, "Unexpected: extras is not a valid json", e);

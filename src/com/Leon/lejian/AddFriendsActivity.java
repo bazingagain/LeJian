@@ -32,11 +32,16 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 	private EditText findUserName = null;
 	private String friendName = null;
 	private FriendUser tempFriendInfo = null;
+	Intent intent = null;
+	Bundle bundle = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_friend);
+		intent = getIntent();
+		// 如果是二维码扫描的结果
+		bundle = intent.getBundleExtra("barcode_result");
 		initView();
 	}
 
@@ -44,6 +49,10 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 		findBtn = (Button) findViewById(R.id.findBtn);
 		findBtn.setOnClickListener(this);
 		findUserName = (EditText) findViewById(R.id.find_username);
+		if(bundle!=null){
+			//设置默认的搜索人为扫码到的人
+			findUserName.setText(bundle.getString("barcode_result"));
+		}
 	}
 
 	@Override
@@ -51,19 +60,25 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 		if (v.getId() == R.id.findBtn) {
 			SharedPreferences share = getSharedPreferences(
 					Constants.SHARE_USERINFO, MODE_PRIVATE);
-			if ((!share.contains("app_user")) || share.getString("app_user", null) == null) {
+			if ((!share.contains("app_user"))
+					|| share.getString("app_user", null) == null) {
 				Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
 				return;
 			}
+			if (!Constants.isNetworkAvailable(this)) {
+				Toast.makeText(this, "无可用网络", Toast.LENGTH_SHORT).show();
+				return;
+			}
+
 			friendName = findUserName.getText().toString().trim();
-			if (friendName == null ||friendName.isEmpty()) {
+			if (friendName == null || friendName.isEmpty()) {
 				Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show();
 				return;
-			} 
-			else if(share.getString("app_user", null).equals(friendName)){
-				Toast.makeText(this, "不能添加自己为好友", Toast.LENGTH_SHORT).show();
-				return ;
 			}
+			// else if(share.getString("app_user", null).equals(friendName)){
+			// Toast.makeText(this, "不能添加自己为好友", Toast.LENGTH_SHORT).show();
+			// return ;
+			// }
 			else {
 				try {
 					// 本地检查要添加的朋友是否已在本地数据库中
@@ -71,7 +86,13 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 						Intent intent = new Intent(this,
 								FriendProfileActivity.class);
 						Bundle bundle = new Bundle();
-						FriendUser friendUser = new FriendUser(tempFriendInfo.getName(), tempFriendInfo.getNickname(), tempFriendInfo.getPic_url(), tempFriendInfo.getSex(), tempFriendInfo.getAddress(), tempFriendInfo.getSignature());
+						FriendUser friendUser = new FriendUser(
+								tempFriendInfo.getName(),
+								tempFriendInfo.getNickname(),
+								tempFriendInfo.getPic_url(),
+								tempFriendInfo.getSex(),
+								tempFriendInfo.getAddress(),
+								tempFriendInfo.getSignature());
 						bundle.putSerializable("friend", friendUser);
 						intent.putExtra("showRequstUserInfo", bundle);
 						startActivity(intent);
@@ -92,7 +113,8 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 								public void onFailure(HttpException arg0,
 										String arg1) {
 									Toast.makeText(getApplicationContext(),
-											"已发送，等待用户同意", Toast.LENGTH_SHORT).show();
+											"已发送，等待用户同意", Toast.LENGTH_SHORT)
+											.show();
 								}
 
 								@Override

@@ -9,6 +9,7 @@ import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.bean.RootUser;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -28,6 +29,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class LoginActivity extends Activity implements OnClickListener {
+	RootUser rootUser= null;
 	Button loginBtn = null;
 	Button registerBtn = null;
 	EditText userName = null;
@@ -39,7 +41,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 	String app_user_sex = null;
 	String app_user_address = null;
 	String app_user_signature = null;
-	
 	private HttpUtils httpUtils;
 	public static LoginActivity loginActivity;
 
@@ -170,6 +171,12 @@ public class LoginActivity extends Activity implements OnClickListener {
 		edit.putString("app_user_address", app_user_address);
 		edit.putString("app_user_signature", app_user_signature);
 		edit.commit();
+		rootUser = RootUser.getInstance();
+		rootUser.setName(userNameStr);
+		rootUser.setNickname(app_user_nickname);
+		rootUser.setSex(app_user_sex);
+		rootUser.setAddress(app_user_address);
+		rootUser.setSignature(app_user_signature);
 	}
 
 }

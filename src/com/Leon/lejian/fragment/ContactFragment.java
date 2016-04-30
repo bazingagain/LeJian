@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.Leon.lejian.ContactProfileActivity;
 import com.Leon.lejian.FriendProfileActivity;
 import com.Leon.lejian.R;
 import com.Leon.lejian.api.Constants;
@@ -40,6 +41,11 @@ public class ContactFragment extends Fragment implements OnItemClickListener{
 		listView  = (ListView) view.findViewById(R.id.contact_listview);
 		updateContact();
 		listView.setOnItemClickListener(this);
+	}
+	@Override
+	public void onResume() {
+		updateContact();
+		super.onResume();
 	}
 	
 	private void updateContact(){
@@ -64,10 +70,10 @@ public class ContactFragment extends Fragment implements OnItemClickListener{
 			long id) {
 		//TODO 后期改为数据库
 		FriendUser user = Constants.contactUserList.get(position);
-		Intent intent = new Intent(getActivity(), FriendProfileActivity.class);
+		Intent intent = new Intent(getActivity(), ContactProfileActivity.class);
 		Bundle friendBundle = new Bundle();
-		friendBundle.putSerializable("friend", user);
-		intent.putExtra("showRequstUserInfo", friendBundle);
+		friendBundle.putSerializable("contactUser", user);
+		intent.putExtra("showContactUserInfo", friendBundle);
 		startActivity(intent);
 	}
 	

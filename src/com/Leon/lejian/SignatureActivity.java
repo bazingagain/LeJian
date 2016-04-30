@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.bean.RootUser;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -113,6 +114,8 @@ public class SignatureActivity extends Activity implements OnClickListener {
 									myDialog.dismiss();
 									changeUserInfo(signatureText.getText().toString());
 									Toast.makeText(activity, "个性签名已保存", Toast.LENGTH_LONG).show();
+									RootUser rootUser = RootUser.getInstance();
+									rootUser.setSignature(signatureText.getText().toString());
 									finish();
 								}else{
 									myDialog.dismiss();

@@ -7,17 +7,37 @@ public class FriendUser implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String name;
-	private String nickname;
-	private String pic_url;
-	private String sex;
-	private String address;
-	private String signature;
-	private double latitude;
-	private double longitude;
+	protected String name;
+	protected String nickname;
+	protected String pic_url;
+	protected String sex;
+	protected String address;
+	protected String signature;
+	protected double latitude;
+	protected double longitude;
+	public int getStatus_agree() {
+		return status_agree;
+	}
+	public void setStatus_agree(int status_agree) {
+		this.status_agree = status_agree;
+	}
+	// 0: 无分享请求
+	// 1： 自己请求别人分享
+	// 2：别人请求自己分享
+	protected int status_share;
+	
+	// 1： 同意
+	// 2：
+	protected int status_agree;
 	
 	public FriendUser(){
 		
+	}
+	public int getStatus_share() {
+		return status_share;
+	}
+	public void setStatus_share(int status_share) {
+		this.status_share = status_share;
 	}
 	public String getName() {
 		return name;

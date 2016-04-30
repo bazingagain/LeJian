@@ -9,6 +9,7 @@ import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.bean.RootUser;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -31,11 +32,10 @@ public class RegisterActivity extends Activity implements OnClickListener {
 	Button registerBt = null;
 	EditText userEdt = null;
 	EditText passwordEdt = null;
-	EditText emailEdt = null;
 	private HttpUtils httpUtils;
 	String user = null;
 	String password = null;
-	String email = null;
+	RootUser rootUser = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,6 @@ public class RegisterActivity extends Activity implements OnClickListener {
 	private void initView() {
 		userEdt = (EditText) findViewById(R.id.registerName);
 		passwordEdt = (EditText) findViewById(R.id.RegisterPassword);
-		emailEdt = (EditText) findViewById(R.id.registerEmail);
 		registerBt = (Button) findViewById(R.id.registerBtn);
 		registerBt.setOnClickListener(this);
 	}
@@ -119,17 +118,13 @@ public class RegisterActivity extends Activity implements OnClickListener {
 	public boolean hasError() {
 		user = userEdt.getText().toString().trim();
 		password = passwordEdt.getText().toString().trim();
-		email = emailEdt.getText().toString().trim();
 		if (user.isEmpty()) {
 			Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show();
 			return true;
 		} else if (password.isEmpty()) {
 			Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show();
 			return true;
-		} else if (email.isEmpty()) {
-			Toast.makeText(this, "注册邮箱不能为空", Toast.LENGTH_SHORT).show();
-			return true;
-		}
+		} 
 		return false;
 	}
 	private void changeUserInfo() {
@@ -144,6 +139,13 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		edit.putString("app_user_address", null);
 		edit.putString("app_user_signature", null);
 		edit.commit();
+		
+		rootUser = RootUser.getInstance();
+		rootUser.setName(user);
+		rootUser.setNickname(null);
+		rootUser.setSex(null);
+		rootUser.setAddress(null);
+		rootUser.setSignature(null);
 	}
 	
 }

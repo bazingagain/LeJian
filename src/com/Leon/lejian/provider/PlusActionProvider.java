@@ -3,7 +3,7 @@ package com.Leon.lejian.provider;
 
 import com.Leon.lejian.AddFriendsActivity;
 import com.Leon.lejian.R;
-import com.Leon.lejian.bean.TestUser;
+import com.Leon.lejian.bean.RootUser;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.geocode.GeoCodeResult;
@@ -15,7 +15,9 @@ import com.baidu.mapapi.search.share.LocationShareURLOption;
 import com.baidu.mapapi.search.share.OnGetShareUrlResultListener;
 import com.baidu.mapapi.search.share.ShareUrlResult;
 import com.baidu.mapapi.search.share.ShareUrlSearch;
+import com.zxing.activity.CaptureActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.sax.StartElementListener;
@@ -30,6 +32,7 @@ public class PlusActionProvider extends ActionProvider implements
 		OnGetShareUrlResultListener, OnGetGeoCoderResultListener{
 
 	private Context context;
+	private Activity activity;
 	/**
 	 * 搜索位置 分享
 	 */
@@ -78,18 +81,18 @@ public class PlusActionProvider extends ActionProvider implements
 		 * 分享位置
 		 */
 		subMenu.add(context.getString(R.string.plus_location_share))
-				.setIcon(R.drawable.ofm_video_icon)
+				.setIcon(R.drawable.ofm_feedback_icon)
 				.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 					@Override
 					public boolean onMenuItemClick(MenuItem item) {
-						TestUser testUser = TestUser.getInstance();
+						RootUser testUser = RootUser.getInstance();
 						LatLng latLng = new LatLng(testUser.getLocation()
 								.getLatitude(), testUser.getLocation()
 								.getLongitude());
 						mGeoCoder.reverseGeoCode(new ReverseGeoCodeOption().location(latLng));
 						Toast.makeText(
 								context,
-								String.format("搜索位置： %f，%f", latLng.latitude, latLng.longitude),
+								String.format("当前位置： %f，%f", latLng.latitude, latLng.longitude),
 								Toast.LENGTH_SHORT).show();
 						
 						return true;
@@ -103,6 +106,8 @@ public class PlusActionProvider extends ActionProvider implements
 				.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 					@Override
 					public boolean onMenuItemClick(MenuItem item) {
+						Intent intent = new Intent(context, CaptureActivity.class);
+						context.startActivity(intent);
 						return false;
 					}
 				});
@@ -116,13 +121,13 @@ public class PlusActionProvider extends ActionProvider implements
 	@Override
 	public void onGetLocationShareUrlResult(ShareUrlResult result) {
 		// 分享短串结果
-		TestUser testUser = TestUser.getInstance();
+		RootUser testUser = RootUser.getInstance();
 		Intent it = new Intent(Intent.ACTION_SEND);
 		it.putExtra(Intent.EXTRA_TEXT,
-				"您的朋友通过百度地图SDK与您分享一个位置: " + testUser.getLocation().getAddrStr()
+				"您的朋友通过乐见与您分享一个位置: " + testUser.getLocation().getAddrStr()
 						+ " -- " + result.getUrl());
 		it.setType("text/plain");
-		context.startActivity(Intent.createChooser(it, "将短串分享到"));
+		context.startActivity(Intent.createChooser(it, "将位置分享到"));
 
 	}
 

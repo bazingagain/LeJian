@@ -1,7 +1,6 @@
 package com.Leon.lejian.listener;
 
 
-import java.util.Random;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,10 +8,9 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.Leon.lejian.api.Constants;
-import com.Leon.lejian.bean.TestUser;
+import com.Leon.lejian.bean.RootUser;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.mapapi.map.BaiduMap;
@@ -35,7 +33,7 @@ public class MyLocationListener implements BDLocationListener{
 	private Context context;
 	static HttpUtils httpUtils;
 	
-	TestUser testUser;
+	RootUser testUser;
 	public MyLocationListener(Context context, BaiduMap mBaiduMap, MapView mMapView, boolean isFirstLoc) {
 		this.context = context;
 		this.mBaiduMap = mBaiduMap;
@@ -73,10 +71,10 @@ public class MyLocationListener implements BDLocationListener{
              sb.append(location.getAddrStr());  
           }   
         Log.i("log", sb.toString());  
+        //将位置实时传到服务器
         sendLocationToServer(location.getLatitude(), location.getLongitude());
-         testUser = TestUser.getInstance();
+         testUser = RootUser.getInstance();
         testUser.setLocation(location);
-        
         MyLocationData locData = new MyLocationData.Builder()
                 .accuracy(location.getRadius())
                         // 此处设置开发者获取到的方向信息，顺时针0-360
@@ -102,10 +100,6 @@ public class MyLocationListener implements BDLocationListener{
 //		TODO排除没注册的情况
 		if(share.getString("app_user", "tempUser").equals("tempUser"))
 			return ;
-//		if(share.getString("app_user", null).isEmpty()||(!share.contains("app_user"))){
-//			Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
-//			return ;
-//		}
 		RequestParams params = new RequestParams();
 		JSONObject json = new JSONObject();
 		try {

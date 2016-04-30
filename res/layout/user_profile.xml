@@ -11,6 +11,7 @@
 
         <TextView
             android:layout_weight="1"
+            android:layout_marginLeft="10px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/icon" />
@@ -19,8 +20,8 @@
             android:id="@+id/icon"
             android:layout_width="100px"
             android:layout_height="fill_parent"
-            android:layout_marginRight="0px"
-            android:background="@android:drawable/ic_menu_gallery" />
+            android:layout_marginRight="10px"
+            android:src="@drawable/default_user_pic" />
 
     </LinearLayout>
     <View 
@@ -37,6 +38,7 @@
 
         <TextView
             android:layout_weight="1"
+            android:layout_marginLeft="10px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nickname" />
@@ -45,6 +47,7 @@
             android:gravity="right"
             android:id="@+id/nickname"
             android:layout_weight="3"
+            android:layout_marginRight="10px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/none" />
@@ -62,6 +65,7 @@
 
         <TextView
             android:layout_weight="1"
+            android:layout_marginLeft="10px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sex" />
@@ -70,6 +74,7 @@
              android:gravity="right"
             android:id="@+id/sex"
             android:layout_weight="3"
+            android:layout_marginRight="10px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/none" />
@@ -87,6 +92,7 @@
 
         <TextView
             android:layout_weight="1"
+            android:layout_marginLeft="10px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/location" />
@@ -95,6 +101,7 @@
             android:layout_weight="3"
              android:gravity="right"
             android:id="@+id/address"
+            android:layout_marginRight="10px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/none" />
@@ -112,6 +119,7 @@
 
         <TextView
             android:layout_weight="1"
+            android:layout_marginLeft="10px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/two_dimension_code" />
@@ -119,8 +127,8 @@
             android:id="@+id/two_dimension_code"
             android:layout_width="100px"
             android:layout_height="fill_parent"
-            android:layout_marginRight="0px"
-            android:background="@android:drawable/ic_menu_gallery" />
+            android:layout_marginRight="10px"
+            android:src="@drawable/er_wei_ma" />
 
     </LinearLayout>
     <View 
@@ -135,6 +143,7 @@
 
         <TextView
             android:layout_weight="1"
+            android:layout_marginLeft="10px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/signature" />
@@ -143,6 +152,7 @@
              android:gravity="right"
             android:layout_weight="3"
             android:id="@+id/signature"
+            android:layout_marginRight="10px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/none" />

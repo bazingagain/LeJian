@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.bean.RootUser;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -111,7 +112,9 @@ public class NicknameActivity extends Activity implements OnClickListener{
 								if(info.getString("saveNickname").equals("true")){
 									myDialog.dismiss();
 									changeUserInfo(nicknameText.getText().toString());
-									Toast.makeText(activity, "个性签名已保存", Toast.LENGTH_LONG).show();
+									Toast.makeText(activity, "昵称已保存", Toast.LENGTH_LONG).show();
+									RootUser rootUser = RootUser.getInstance();
+									rootUser.setNickname(nicknameText.getText().toString());
 									finish();
 								}else{
 									myDialog.dismiss();

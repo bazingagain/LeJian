@@ -3,6 +3,7 @@ package com.Leon.lejian.provider;
 
 import com.Leon.lejian.AddFriendsActivity;
 import com.Leon.lejian.R;
+import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.RootUser;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.SearchResult;
@@ -20,6 +21,7 @@ import com.zxing.activity.CaptureActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.sax.StartElementListener;
 import android.view.ActionProvider;
 import android.view.MenuItem;
@@ -121,10 +123,12 @@ public class PlusActionProvider extends ActionProvider implements
 	@Override
 	public void onGetLocationShareUrlResult(ShareUrlResult result) {
 		// 分享短串结果
+		SharedPreferences share = context.getSharedPreferences(
+				Constants.SHARE_USERINFO, context.MODE_PRIVATE);
 		RootUser testUser = RootUser.getInstance();
 		Intent it = new Intent(Intent.ACTION_SEND);
 		it.putExtra(Intent.EXTRA_TEXT,
-				"您的朋友通过乐见与您分享一个位置: " + testUser.getLocation().getAddrStr()
+				"您的朋友("+share.getString("app_user", null)+")通过乐见与您分享一个位置: " + testUser.getLocation().getAddrStr()
 						+ " -- " + result.getUrl());
 		it.setType("text/plain");
 		context.startActivity(Intent.createChooser(it, "将位置分享到"));

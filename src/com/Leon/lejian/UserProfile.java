@@ -1,5 +1,8 @@
 package com.Leon.lejian;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,6 +30,7 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -103,12 +107,23 @@ public class UserProfile extends Activity implements OnClickListener {
 			changeUserInfo("app_user_address", null);
 			changeUserInfo("app_user_signature", null);
 		} else {
+
+			File sdCardDir = Environment.getExternalStorageDirectory();
+			File picDirFile = new File(sdCardDir + "/LeJianUserPic");
+			if (!picDirFile.exists())
+				picDirFile.mkdir();
+			File userPicFile = new File(
+					Environment.getExternalStorageDirectory()
+							+ "/LeJianUserPic/"
+							+ "USER_"+Constants.md5(share.getString("app_user", null))+".jpg");
+			Constants.userPic = Constants.getBytesFromFile(userPicFile);
+			
 			clipPic = Constants.userPic;// 裁剪传过来的头像
-			if(clipPic!=null){
-				clipBitmap = BitmapFactory.decodeByteArray(clipPic, 0, clipPic.length);
+			if (clipPic != null) {
+				clipBitmap = BitmapFactory.decodeByteArray(clipPic, 0,
+						clipPic.length);
 			}
-			if (clipBitmap != null)
-			{
+			if (clipBitmap != null) {
 				imgIcon.setImageBitmap(clipBitmap);
 			}
 			textNickname
@@ -153,7 +168,7 @@ public class UserProfile extends Activity implements OnClickListener {
 				Toast.makeText(this, "请登录", Toast.LENGTH_SHORT).show();
 				return;
 			}
-			if (!isNetworkAvailable(this)) {
+			if (!Constants.isNetworkAvailable(this)) {
 				Toast.makeText(this, "没有可用网络", Toast.LENGTH_SHORT).show();
 				return;
 			}
@@ -283,30 +298,6 @@ public class UserProfile extends Activity implements OnClickListener {
 		SharedPreferences.Editor edit = share.edit(); // 编辑文件
 		edit.putString(key, value);
 		edit.commit();
-	}
-
-	public boolean isNetworkAvailable(Activity activity) {
-		Context context = activity.getApplicationContext();
-		// 获取手机所有连接管理对象（包括对wi-fi,net等连接的管理）
-		ConnectivityManager connectivityManager = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-		if (connectivityManager == null) {
-			return false;
-		} else {
-			// 获取NetworkInfo对象
-			NetworkInfo[] networkInfo = connectivityManager.getAllNetworkInfo();
-
-			if (networkInfo != null && networkInfo.length > 0) {
-				for (int i = 0; i < networkInfo.length; i++) {
-					// 判断当前网络状态是否为连接状态
-					if (networkInfo[i].getState() == NetworkInfo.State.CONNECTED) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
 	}
 
 }

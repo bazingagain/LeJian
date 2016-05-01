@@ -1,10 +1,25 @@
 package com.Leon.lejian;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
@@ -12,21 +27,11 @@ import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.RootUser;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.HttpHandler;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 public class LoginActivity extends Activity implements OnClickListener {
 	RootUser rootUser= null;
@@ -100,7 +105,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 										app_user_sex = info.getString("sex");
 										app_user_address = info.getString("address");
 										app_user_signature = info.getString("signature");
-										
+										//TODO  暂时用JPG  
+										download(userNameStr);
 										Intent intent = new Intent(
 												LoginActivity.this,
 												MainActivity.class);
@@ -179,4 +185,44 @@ public class LoginActivity extends Activity implements OnClickListener {
 		rootUser.setSignature(app_user_signature);
 	}
 
+	private void download(final String userName){
+		//md5
+		 File sdCardDir = Environment.getExternalStorageDirectory();
+		 String lejianUserPicPath = null;
+		 File userPicFile =null;
+		 final String fileName = "USER_"+Constants.md5(userName)+".jpg";
+			try {
+				File picDirFile = new File(sdCardDir+"/LeJianUserPic");
+				if(!picDirFile.exists())
+					picDirFile.mkdir();
+				userPicFile = new File(sdCardDir+"/LeJianUserPic/"+"USER_"+fileName);
+				if(userPicFile.exists()){
+					//每次下载都更新
+					userPicFile.delete();
+				}
+				lejianUserPicPath = sdCardDir.getCanonicalPath()+"/LeJianUserPic/"+fileName;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		HttpUtils http = new HttpUtils();
+		HttpHandler handler = http.download(Constants.HOST_PIC_RESOURCE+fileName,
+				lejianUserPicPath,
+		    true, // 如果目标文件存在，接着未完成的部分继续下载。服务器不支持RANGE时将从新下载。
+		    true, // 如果从请求返回信息中获取到文件名，下载完成后自动重命名。
+		    new RequestCallBack<File>() {
+		        @Override
+		        public void onSuccess(ResponseInfo<File> responseInfo) {
+		        	Log.d("DOWNLOAD", responseInfo.result.getPath());
+		        	File userPicFile = new File(Environment.getExternalStorageDirectory()+"/LeJianUserPic/"+fileName);
+		        	Constants.userPic = Constants.getBytesFromFile(userPicFile);
+		        }
+		        @Override
+		        public void onFailure(HttpException error, String msg) {
+		        	Log.e("DOWNLOAD", "下载用户图片失败");
+		        }
+		});
+		//调用cancel()方法停止下载
+//		handler.cancel();
+	}
+	
 }

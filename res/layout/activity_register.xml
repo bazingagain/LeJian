@@ -1,41 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent" >
 
-    <EditText
+    <com.Leon.lejian.view.LineEditText
         android:id="@+id/registerName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+         android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="66dp"
-        android:hint="@string/register_user"
+        android:layout_marginTop="91dp"
+        android:background="@null"
         android:ems="10"
+        android:hint="@string/register_user"
         android:inputType="textPersonName" />
 
-    <EditText
+    <com.Leon.lejian.view.LineEditText
         android:id="@+id/RegisterPassword"
+         android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/registerName"
-        android:layout_alignRight="@+id/registerName"
+        android:layout_alignParentLeft="true"
         android:layout_below="@+id/registerName"
-        android:layout_marginTop="31dp"
+        android:layout_marginTop="42dp"
+        android:background="@null"
         android:ems="10"
         android:hint="@string/register_password"
         android:inputType="textPassword" >
 
-        <requestFocus />
-    </EditText>
+    </com.Leon.lejian.view.LineEditText>
 
     <Button
         android:id="@+id/registerBtn"
+         android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginTop="33dp"
+        android:background="@drawable/wechat_button_green"
         android:text="@string/register_btn" />
 
 </RelativeLayout>

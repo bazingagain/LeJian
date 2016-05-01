@@ -60,6 +60,7 @@ public class MainActivity extends FragmentActivity implements
 			Intent intent = new Intent(this, LoginActivity.class);
 			startActivity(intent);
 			finish();
+			return;
 		}
 		
 		super.onCreate(savedInstanceState);

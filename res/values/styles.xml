@@ -6,6 +6,7 @@
         <item name="android:actionBarItemBackground">@drawable/actionbar_bg_selector</item>  
         <item name="android:itemTextAppearance">@style/WeChatActionBarOverflow</item>  
         <item name="android:actionOverflowButtonStyle">@style/WeChatActionButtonOverflow</item>  
+        <item name="android:background">@color/white</item>
     </style>  
   
     <style name="WeChatActionBar" parent="@android:style/Widget.Holo.ActionBar">  
@@ -32,4 +33,5 @@
         <item name="android:windowEnterAnimation">@anim/slide_in</item>
         <item name="android:windowExitAnimation">@anim/slide_out</item>
     </style>
+    
 </resources>

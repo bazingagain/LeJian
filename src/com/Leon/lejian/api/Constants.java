@@ -1,5 +1,12 @@
 package com.Leon.lejian.api;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -10,13 +17,15 @@ import android.net.NetworkInfo;
 import com.Leon.lejian.bean.FriendUser;
 
 public class Constants {
-	public static final String HOST = "HTTP://182.254.234.35/myla/public";
-//	public static final String HOST = "HTTP://119.85.210.46/myla/public";
+//	public static final String HOST = "HTTP://182.254.234.35/myla/public";
+	public static final String HOST = "HTTP://119.85.217.96/myla/public";
+	public static final String HOST_PIC_RESOURCE = "HTTP://119.85.217.96/myla/storage/app/userPic/";
 	public static final String REGISTER_PATH = "/userRegister";
 	public static final String LOGIN_PATH = "/userLogin";
 	public static final String ADD_PATH = "/userAdd";
 	public static final String AGREE_PATH = "/userAgree";
 	public static final String SEND_LOCATION_PATH = "/userSetLocation";
+	
 	
 	public static final String SHARE_LOCATION_PATH = "/userShareLocation";
 	public static final String GET_CONTACT_LOCATION = "/getContactLocation";
@@ -69,4 +78,52 @@ public class Constants {
 		}
 		return false;
 	}
+	
+	/** 
+     * 文件转化为字节数组 
+     *  
+     * @param file 
+     * @return 
+     */  
+    public static byte[] getBytesFromFile(File file) {  
+        byte[] ret = null;  
+        try {  
+            if (file == null) {  
+                // log.error("helper:the file is null!");  
+                return null;  
+            }  
+            FileInputStream in = new FileInputStream(file);  
+            ByteArrayOutputStream out = new ByteArrayOutputStream(4096);  
+            byte[] b = new byte[4096];  
+            int n;  
+            while ((n = in.read(b)) != -1) {  
+                out.write(b, 0, n);  
+            }  
+            in.close();  
+            out.close();  
+            ret = out.toByteArray();  
+        } catch (IOException e) {  
+            // log.error("helper:get bytes from file process error!");  
+            e.printStackTrace();  
+        }  
+        return ret;  
+    }  
+    
+    public static String md5(String string) {
+        byte[] hash;
+        try {
+            hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Huh, MD5 should be supported?", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Huh, UTF-8 should be supported?", e);
+        }
+
+        StringBuilder hex = new StringBuilder(hash.length * 2);
+        for (byte b : hash) {
+            if ((b & 0xFF) < 0x10) hex.append("0");
+            hex.append(Integer.toHexString(b & 0xFF));
+        }
+        return hex.toString();
+    }
 }

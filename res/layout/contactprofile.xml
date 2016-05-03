@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+     <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/common_height"
+        android:gravity="center" >
+
+        <ImageView
+            android:id="@+id/contact_pic"
+            android:layout_width="100px"
+            android:layout_height="@dimen/common_height"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_menu_gallery" />
+
+        <LinearLayout
+        android:layout_marginRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="4"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/contact_name"
+                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="@null" />
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/contact_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@null" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_marginLeft="10px"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/label_contact_sex"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/common_height"
+                android:layout_weight="1"
+                android:text="@string/sex" />
+
+            <TextView
+                android:gravity="center"
+                android:id="@+id/label_contact_address"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/common_height"
+                android:layout_weight="1"
+                android:text="@string/location" />
+
+            <TextView
+                android:gravity="center"
+                android:id="@+id/label_contact_signature"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/common_height"
+                android:layout_weight="1"
+                android:text="@string/signature" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="3"
+        	android:layout_marginRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/contact_sex"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_height"
+                android:gravity="center_vertical"
+                android:text="@null" />
+
+            <TextView
+                android:id="@+id/contact_address"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_height"
+                android:layout_weight="1"
+                 android:gravity="center_vertical"
+                android:text="@null" />
+
+            <TextView
+                android:id="@+id/contact_signature"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_height"
+                android:layout_weight="1"
+                 android:gravity="center_vertical"
+                android:text="@null" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/comShareLocBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/wechat_button_green"
+        android:text="@string/shareLoc" />
+
+</LinearLayout>

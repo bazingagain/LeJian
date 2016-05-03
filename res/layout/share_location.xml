@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:background="@color/white_smoke"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_height" >
+
+        <Button
+            android:id="@+id/closeShareBtn"
+            android:layout_weight="1"
+            android:background="@drawable/wechat_button_read"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/closeShare" />
+
+        <LinearLayout
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:gravity="center"
+                    android:id="@+id/tv_me_name"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@null" />
+
+                <TextView
+                    android:layout_weight="1"
+                     android:gravity="center"
+                    android:id="@+id/tv_me_loc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@null" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_contact_name"
+                    android:layout_weight="1"
+                     android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@null" />
+
+                <TextView
+                    android:id="@+id/tv_contact_loc"
+                    android:layout_weight="1"
+                     android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@null" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/addShareBtn"
+            android:background="@drawable/wechat_button_green"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addShare" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/shareMapView"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:clickable="true" />
+
+    </LinearLayout>
+
+</LinearLayout>

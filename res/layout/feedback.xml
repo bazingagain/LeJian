@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <com.Leon.lejian.view.LineEditText
+        android:id="@+id/editText_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="179dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@null"
+        android:ems="10"
+        android:hint="@string/send_feedback_hint"
+        android:inputType="textMultiLine" >
+	
+    </com.Leon.lejian.view.LineEditText>
+    
+    <com.Leon.lejian.view.LineEditText
+        android:layout_marginTop="40dp"
+        android:id="@+id/editText_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/youremail"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:ems="10"
+        android:background="@null"
+        android:inputType="textEmailAddress" >
+    </com.Leon.lejian.view.LineEditText>
+
+    <Button
+        android:layout_marginTop="40dp"
+        android:id="@+id/feedbackBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/wechat_button_green"
+        android:text="@string/send_feedback" />
+
+</LinearLayout>

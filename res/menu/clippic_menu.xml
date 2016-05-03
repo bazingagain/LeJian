@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+   <!--  <item
+        android:id="@+id/id_action_clip"
+        android:icon="@drawable/actionbar_clip_icon"
+        android:showAsAction="always|withText"
+        android:title="裁切"/> -->
+    <item
+        android:id="@+id/id_action_clip"
+        android:icon="@drawable/actionbar_clip_icon"
+        android:showAsAction="always|withText"
+        android:title="@string/user_pic_use"/>
+
+</menu>

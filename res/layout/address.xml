@@ -1,0 +1,663 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_smoke"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+       
+        <LinearLayout
+            android:id="@+id/addr_anhui"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                android:layout_marginLeft="10px"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/anhui" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_aomen"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/aomen" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_beijing"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/beijing" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_chongqing"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/chongqing" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_fujian"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/fujian" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_guangdong"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/guangdong" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_gansu"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/gansu" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_guangxi"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/guangxi" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_guizhou"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/guizhou" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_hebei"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hebei" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_hubei"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hubei" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_heilongjiang"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/heilongjiang" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_hainan"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hainan" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_henan"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/henan" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            
+            android:id="@+id/addr_hunan"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hunan" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_jilin"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/jilin" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_jiangsu"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/jiangsu" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_jiangxi"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/jiangxi" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_liaoning"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/liaoning" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_neimegngu"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/neimenggu" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_ningxia"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ningxia" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_qinghai"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/qinghai" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_sichuan"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/sichuan" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_shandong"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/shandong" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_shanghai"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/shanghai" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_shanxi_shan"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/shanxi_shan" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_shanxi_jin"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/shanxi_jin" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_tianjin"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/tianjin" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_taiwan"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/taiwan" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_xizang"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/xizang" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_xianggang"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/xianggang" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_xinjiang"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/xinjiang" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_yunnan"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/yunnan" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/addr_zhejiang"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/common_height"
+            android:gravity="center" >
+
+            <TextView
+                 android:layout_marginLeft="10px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/zhejiang" />
+        </LinearLayout>
+         </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

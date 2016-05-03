@@ -1,5 +1,8 @@
 package com.Leon.lejian.receiver;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,6 +12,11 @@ import com.Leon.lejian.MainActivity;
 import com.Leon.lejian.ShareLocationActivity;
 import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.FriendUser;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.HttpHandler;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 
 import cn.jpush.android.api.JPushInterface;
 import android.app.NotificationManager;
@@ -16,6 +24,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.sax.StartElementListener;
 import android.util.Log;
 
@@ -92,6 +101,9 @@ public class MyReceiver extends BroadcastReceiver {
 						extrasJson.getString("friend_address"),
 						extrasJson.getString("friend_signature"));
 				Constants.requestUserList.add(friendUser);
+				//下载用户的头像
+				download(extrasJson.getString("friend_name"), "add");
+				
 			}else if(extrasJson.getString("type").equals("requestShareLoc")){
 				//接到别人的共享位置请求  则添加这个共享到共享List中
 				for(int i= 0; i < Constants.requestShareUserList.size(); i++){
@@ -110,7 +122,6 @@ public class MyReceiver extends BroadcastReceiver {
 						extrasJson.getString("friend_signature"));
 				friendUser.setStatus_share(Constants.OTHER_REQUEST_SELF);
 				Constants.requestShareUserList.add(friendUser);
-				
 			}
 			else if(extrasJson.getString("type").equals("agreeShareLoc")){
 				//接收到对方同意 自己的共享位置请求 (在 共享位置Activity里，实时获取并显示好友的位置)
@@ -186,6 +197,45 @@ public class MyReceiver extends BroadcastReceiver {
 			Log.w(TAG, "Unexpected: extras is not a valid json", e);
 			return;
 		}
+	}
+	
+	private void download(final String userName, String type){
+		//md5
+		 File sdCardDir = Environment.getExternalStorageDirectory();
+		 String lejianUserPicPath = null;
+		 File userPicFile =null;
+		 final String fileName = "USER_"+Constants.md5(userName)+".jpg";
+			try {
+				File picDirFile = new File(sdCardDir+"/LeJianTempUserPic");
+				if(!picDirFile.exists())
+					picDirFile.mkdir();
+				userPicFile = new File(sdCardDir+"/LeJianTempUserPic/"+fileName);
+				if(userPicFile.exists()){
+					//每次下载都更新
+					userPicFile.delete();
+				}
+				lejianUserPicPath = sdCardDir.getCanonicalPath()+"/LeJianTempUserPic/"+fileName;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		HttpUtils http = new HttpUtils();
+		HttpHandler handler = http.download(Constants.HOST_PIC_RESOURCE+fileName,
+				lejianUserPicPath,
+		    true, // 如果目标文件存在，接着未完成的部分继续下载。服务器不支持RANGE时将从新下载。
+		    true, // 如果从请求返回信息中获取到文件名，下载完成后自动重命名。
+		    new RequestCallBack<File>() {
+		        @Override
+		        public void onSuccess(ResponseInfo<File> responseInfo) {
+		        	Log.d("DOWNLOAD", responseInfo.result.getPath());
+		        	Log.d("DOWNLOAD", "下载用户图片成功");
+		        }
+		        @Override
+		        public void onFailure(HttpException error, String msg) {
+		        	Log.e("DOWNLOAD", "下载用户图片失败");
+		        }
+		});
+		//调用cancel()方法停止下载
+//		handler.cancel();
 	}
 
 }

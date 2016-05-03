@@ -5,18 +5,6 @@ import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cn.jpush.android.api.JPushInterface;
-import cn.jpush.android.api.TagAliasCallback;
-
-import com.Leon.lejian.api.Constants;
-import com.Leon.lejian.bean.RootUser;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +15,18 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.api.TagAliasCallback;
+
+import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.bean.RootUser;
+import com.Leon.lejian.service.DatabaseService;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 
 public class RegisterActivity extends Activity implements OnClickListener {
 	Button registerBt = null;
@@ -83,7 +83,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
 							if(json.getString("register").equals("true")){
 								Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
 								startActivity(intent);
-								//
+								overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
 								if(!JPushInterface.getConnectionState(getApplicationContext())){
 									Log.d(Constants.DEBUG, "未连接，重新连接Jpusn Server服务器");
 									JPushInterface.init(getApplicationContext());
@@ -101,6 +101,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
 									
 								});
 								changeUserInfo();
+								creeateRelationTable();
 								LoginActivity.loginActivity.finish();
 								RegisterActivity.this.finish();
 							}
@@ -148,4 +149,16 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		rootUser.setSignature(null);
 	}
 	
+	private void creeateRelationTable(){
+		DatabaseService dbService = new DatabaseService(this);
+//		dbService.dropTable();  //退出时删除用户 关系表
+		dbService.createFriendTable();
+		dbService.close();
+	}
+	
+	@Override
+	public void finish() {
+		super.finish();
+		overridePendingTransition(R.anim.finish_zoomin, R.anim.finish_zoomout);
+	}
 }

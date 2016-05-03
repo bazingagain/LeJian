@@ -15,6 +15,7 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -34,6 +35,7 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 	private FriendUser tempFriendInfo = null;
 	Intent intent = null;
 	Bundle bundle = null;
+	private ProgressDialog myDialog = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +85,8 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 				try {
 					// 本地检查要添加的朋友是否已在本地数据库中
 					if (checkLocalHasFriendDatabase(friendName)) {
+						Log.d("ADD_FRIEND", "要添加的朋友已经是您的好友");
+						Toast.makeText(this, friendName+"已经是您的好友， 请勿重复添加",Toast.LENGTH_SHORT).show();
 						Intent intent = new Intent(this,
 								FriendProfileActivity.class);
 						Bundle bundle = new Bundle();
@@ -98,6 +102,8 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 						startActivity(intent);
 						return;
 					}
+					myDialog = android.app.ProgressDialog.show(
+							this, null, null);
 					RequestParams params = new RequestParams();
 					JSONObject json = new JSONObject();
 					json.put("clientName", share.getString("app_user", null));
@@ -112,6 +118,7 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 								@Override
 								public void onFailure(HttpException arg0,
 										String arg1) {
+									myDialog.dismiss();
 									Toast.makeText(getApplicationContext(),
 											"已发送，等待用户同意", Toast.LENGTH_SHORT)
 											.show();
@@ -122,6 +129,7 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 									Log.i("TEST_REC", "接收到的结果为---》"
 											+ arg0.result);
 									try {
+										myDialog.dismiss();
 										JSONObject json = new JSONObject(
 												arg0.result);
 										Toast.makeText(getApplicationContext(),

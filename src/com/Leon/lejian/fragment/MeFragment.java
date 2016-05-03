@@ -21,6 +21,7 @@ import com.Leon.lejian.R;
 import com.Leon.lejian.UserProfile;
 import com.Leon.lejian.UserSetting;
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.service.DatabaseService;
 
 public class MeFragment extends Fragment implements OnClickListener {
 	LinearLayout userProfile = null;
@@ -89,12 +90,14 @@ public class MeFragment extends Fragment implements OnClickListener {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
+									
 									Intent intent = new Intent(getActivity(),
 											LoginActivity.class);
 									startActivity(intent);
 									//停止接收
 									JPushInterface.stopPush(getActivity());
 									changeUserInfo();
+									deleteRelationTable();
 									getActivity().finish();
 								}
 							})
@@ -115,6 +118,12 @@ public class MeFragment extends Fragment implements OnClickListener {
 		SharedPreferences.Editor edit = share.edit(); // 编辑文件
 		edit.putString("app_user", null);
 		edit.commit();
+	}
+	
+	private void deleteRelationTable(){
+		DatabaseService dbService = new DatabaseService(this.getActivity());
+		dbService.dropTable("friends");  //退出时删除用户 关系表
+		dbService.close();
 	}
 
 }

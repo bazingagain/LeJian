@@ -18,12 +18,16 @@ import com.Leon.lejian.bean.FriendUser;
 
 public class Constants {
 //	public static final String HOST = "HTTP://182.254.234.35/myla/public";
-	public static final String HOST = "HTTP://119.85.217.96/myla/public";
-	public static final String HOST_PIC_RESOURCE = "HTTP://119.85.217.96/myla/storage/app/userPic/";
+	public static final String HOST = "HTTP://125.81.69.39/myla/public";
+	public static final String HOST_PIC_RESOURCE = "HTTP://125.81.69.39/myla/storage/app/userPic/";
 	public static final String REGISTER_PATH = "/userRegister";
 	public static final String LOGIN_PATH = "/userLogin";
 	public static final String ADD_PATH = "/userAdd";
 	public static final String AGREE_PATH = "/userAgree";
+
+	public static final String SYNC_RELATION_TABLE = "/userSyncRelationTable";
+	
+	
 	public static final String SEND_LOCATION_PATH = "/userSetLocation";
 	
 	

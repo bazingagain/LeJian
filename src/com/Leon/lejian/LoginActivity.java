@@ -1,14 +1,14 @@
 package com.Leon.lejian;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,7 +24,9 @@ import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.bean.FriendUser;
 import com.Leon.lejian.bean.RootUser;
+import com.Leon.lejian.service.DatabaseService;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.HttpHandler;
@@ -111,6 +113,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 												LoginActivity.this,
 												MainActivity.class);
 										startActivity(intent);
+										createAndSyncRelationTable();
+										overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
 										//回复  JPush  服务
 										if (!JPushInterface
 												.getConnectionState(getApplicationContext())) {
@@ -152,6 +156,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 			break;
 		}
 	}
+	@Override
+	public void finish() {
+		super.finish();
+		overridePendingTransition(R.anim.finish_zoomin, R.anim.finish_zoomout);
+	}
 
 	public boolean hasError() {
 		userNameStr = userName.getText().toString().trim();
@@ -183,6 +192,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 		rootUser.setSex(app_user_sex);
 		rootUser.setAddress(app_user_address);
 		rootUser.setSignature(app_user_signature);
+		//同步 用户好友信息。
+		
 	}
 
 	private void download(final String userName){
@@ -195,7 +206,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				File picDirFile = new File(sdCardDir+"/LeJianUserPic");
 				if(!picDirFile.exists())
 					picDirFile.mkdir();
-				userPicFile = new File(sdCardDir+"/LeJianUserPic/"+"USER_"+fileName);
+				userPicFile = new File(sdCardDir+"/LeJianUserPic/"+fileName);
 				if(userPicFile.exists()){
 					//每次下载都更新
 					userPicFile.delete();
@@ -215,6 +226,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		        	Log.d("DOWNLOAD", responseInfo.result.getPath());
 		        	File userPicFile = new File(Environment.getExternalStorageDirectory()+"/LeJianUserPic/"+fileName);
 		        	Constants.userPic = Constants.getBytesFromFile(userPicFile);
+		        	Log.e("DOWNLOAD", "login下载用户图片成功");
 		        }
 		        @Override
 		        public void onFailure(HttpException error, String msg) {
@@ -225,4 +237,89 @@ public class LoginActivity extends Activity implements OnClickListener {
 //		handler.cancel();
 	}
 	
+	private void createAndSyncRelationTable(){
+		RequestParams params = new RequestParams();
+		JSONObject json = new JSONObject();
+		try {
+			json.put("clientName", userNameStr);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		params.addBodyParameter("sync", json.toString());
+//		httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// 
+		
+		HttpUtils http = new HttpUtils();
+		http.send(HttpMethod.POST,Constants.HOST+Constants.SYNC_RELATION_TABLE, params, new RequestCallBack<String>() {
+
+			@Override
+			public void onFailure(HttpException arg0, String arg1) {
+				Log.e("SYNC", "登录时同步下载用户好友关系出错");
+				
+			}
+
+			@SuppressLint("NewApi") @Override
+			public void onSuccess(ResponseInfo<String> arg0) {
+				Log.d("SYNC", "登录时同步下载用户好友关系成功");
+				try {
+					JSONArray jsonArray = new JSONArray(arg0.result);
+					DatabaseService dbService = new DatabaseService(LoginActivity.this);
+					dbService.createFriendTable();
+					for(int i = 0; i< jsonArray.length(); i++){
+						JSONObject info = jsonArray.getJSONObject(i);
+						Log.i("FRIEND", info.toString());
+						//先只下朋友的姓名
+						FriendUser friendUser = new FriendUser(info.getString("friendName"), info.getString("nick_name"), info.getString("pic_url"), info.getString("sex"), info.getString("address"), info.getString("signature"));
+//						dbService.dropTable();  //退出时删除用户 关系表
+						dbService.saveFriendInfo(friendUser);
+						download(info.getString("friendName"), "sync");
+					}
+					dbService.close();
+					
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+	}
+	
+	private void download(final String userName, String type){
+		//md5
+		 File sdCardDir = Environment.getExternalStorageDirectory();
+		 String lejianUserPicPath = null;
+		 File userPicFile =null;
+		 final String fileName = "USER_"+Constants.md5(userName)+".jpg";
+			try {
+				File picDirFile = new File(sdCardDir+"/LeJianTempUserPic");
+				if(!picDirFile.exists())
+					picDirFile.mkdir();
+				userPicFile = new File(sdCardDir+"/LeJianTempUserPic/"+fileName);
+				if(userPicFile.exists()){
+					//每次下载都更新
+					userPicFile.delete();
+				}
+				lejianUserPicPath = sdCardDir.getCanonicalPath()+"/LeJianTempUserPic/"+fileName;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		HttpUtils http = new HttpUtils();
+		HttpHandler handler = http.download(Constants.HOST_PIC_RESOURCE+fileName,
+				lejianUserPicPath,
+		    true, // 如果目标文件存在，接着未完成的部分继续下载。服务器不支持RANGE时将从新下载。
+		    true, // 如果从请求返回信息中获取到文件名，下载完成后自动重命名。
+		    new RequestCallBack<File>() {
+		        @Override
+		        public void onSuccess(ResponseInfo<File> responseInfo) {
+		        	Log.d("DOWNLOAD", responseInfo.result.getPath());
+		        	Log.d("DOWNLOAD", "下载用户图片成功");
+		        }
+		        @Override
+		        public void onFailure(HttpException error, String msg) {
+		        	Log.e("DOWNLOAD", "下载用户图片失败");
+		        }
+		});
+		//调用cancel()方法停止下载
+//		handler.cancel();
+	}
 }

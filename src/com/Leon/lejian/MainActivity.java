@@ -56,14 +56,15 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		
+		super.onCreate(savedInstanceState);
 		if(!checkIsLogin()){
 			Intent intent = new Intent(this, LoginActivity.class);
 			startActivity(intent);
+			overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
 			finish();
 			return;
 		}
 		
-		super.onCreate(savedInstanceState);
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// 百度地图窗口初始化
 		SDKInitializer.initialize(getApplicationContext());
@@ -90,6 +91,11 @@ public class MainActivity extends FragmentActivity implements
 		transaction.replace(R.id.container, fragment);
 		transaction.commit();
 	}
+	@Override
+	public void finish() {
+		super.finish();
+		overridePendingTransition(R.anim.finish_zoomin, R.anim.finish_zoomout);
+	}
 
 	@Override
 	protected void onPause() {
@@ -103,6 +109,13 @@ public class MainActivity extends FragmentActivity implements
 		// mMapView.onResume();
 		super.onResume();
 		JPushInterface.onResume(this);
+		if(!checkIsLogin()){
+			Intent intent = new Intent(this, LoginActivity.class);
+			startActivity(intent);
+			overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
+			finish();
+			return;
+		}
 	}
 
 	@Override

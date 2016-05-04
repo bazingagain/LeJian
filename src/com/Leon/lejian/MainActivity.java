@@ -94,7 +94,6 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void finish() {
 		super.finish();
-		overridePendingTransition(R.anim.finish_zoomin, R.anim.finish_zoomout);
 	}
 
 	@Override

@@ -138,6 +138,7 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 										if (json.getString("add")
 												.equals("true")) {
 											Log.d(Constants.DEBUG, "添加请求发送成功");
+											finish();
 										}
 									} catch (JSONException e) {
 										e.printStackTrace();

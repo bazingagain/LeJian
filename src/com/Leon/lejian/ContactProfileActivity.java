@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.FriendUser;
+import com.Leon.lejian.service.DatabaseService;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -130,19 +131,23 @@ public class ContactProfileActivity extends Activity implements OnClickListener 
 									// 建立实时位置分享Activity
 									// 等待好友加入
 									Log.d(Constants.DEBUG, "等待用户加入共享");
+									finish();
 									// 加入一个共享对话
-									Intent shareIntent = new Intent(
-											ContactProfileActivity.this,
-											ShareLocationActivity.class);
-									Bundle shareBundle = new Bundle();
-									// 传好友信息过去
-									user.setStatus_share(Constants.SELF_REQUEST_OTHER);
-									Constants.requestShareUserList.add(user);
-									shareBundle.putSerializable("contactUser",
-											user);
-									shareIntent.putExtra("contactUser",
-											shareBundle);
-									startActivity(shareIntent);
+//									Intent shareIntent = new Intent(
+//											ContactProfileActivity.this,
+//											ShareLocationActivity.class);
+//									Bundle shareBundle = new Bundle();
+//									// 传好友信息过去
+//									DatabaseService dbService = new DatabaseService(ContactProfileActivity.this);
+//									dbService.createShareLocationTable();
+//									dbService.saveShareLocationInfo(user.getName(), Constants.TYPE_FROME_ME, Constants.STATUS_OFFLINE);
+//									dbService.close();
+////									Constants.requestShareUserList.add(user);
+//									shareBundle.putString("contactUserName",
+//											user.getName());
+//									shareIntent.putExtra("contactUserName",
+//											shareBundle);
+//									startActivity(shareIntent);
 								}
 							} catch (JSONException e) {
 								e.printStackTrace();

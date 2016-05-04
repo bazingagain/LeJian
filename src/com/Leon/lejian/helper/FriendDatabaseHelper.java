@@ -17,12 +17,14 @@ public class FriendDatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		 Log.e("DBOpenHelper", "DBOpenHelperDBOpenHelperDBOpenHelperDBOpenHelper");
 		 db.execSQL("CREATE TABLE IF NOT EXISTS friends (id integer primary key autoincrement, friend_name varchar(50), nickname varchar(50),pic_url varchar(50), sex varchar(4), address varchar(50),signature varchar(50))");
+		 db.execSQL("CREATE TABLE IF NOT EXISTS shareLoc (id integer primary key autoincrement, friend_name varchar(50), type int, status int)");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.e("DBOpenHelper", "onUpgradeonUpgradeonUpgradeonUpgrade");
         db.execSQL("DROP TABLE IF EXISTS friends");
+        db.execSQL("DROP TABLE IF EXISTS shareLoc");
 	}
 	
 

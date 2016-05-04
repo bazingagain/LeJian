@@ -83,14 +83,14 @@
 
         </LinearLayout>
 
-        <Button
+       <!--  <Button
             android:layout_weight="1"
             android:id="@+id/addShareBtn"
             android:background="@drawable/wechat_button_green"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/addShare" />
+            android:text="@string/addShare" /> -->
 
     </LinearLayout>
 

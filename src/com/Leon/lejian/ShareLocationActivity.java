@@ -1,10 +1,13 @@
 package com.Leon.lejian;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,11 +23,17 @@ import android.widget.Toast;
 import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.FriendUser;
 import com.Leon.lejian.bean.RootUser;
-import com.baidu.location.LocationClient;
+import com.Leon.lejian.service.DatabaseService;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.model.LatLng;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -42,143 +51,190 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
  */
 public class ShareLocationActivity extends Activity implements OnClickListener {
 	private Button logoutShareBtn = null;
-	private Button addShareBtn = null;
 	private TextView myNameTv = null;
 	private TextView myLocTv = null;
 	private TextView otherNameTv = null;
 	private TextView otherLocTv = null;
-	private MapView shareMapView = null;
-	private LocationClient mLocClient = null;
-	private LocationMode mCurrentMode = null;
-	BitmapDescriptor mCurrentMarker = null;
+
+	private MapView mMapView = null;
 	private BaiduMap mBaiduMap = null;
+	private Marker mMarkerMe;
+	private Marker mMarkerOther;
+	BitmapDescriptor bdMe = BitmapDescriptorFactory
+			.fromResource(R.drawable.icon_gcoding);
+	BitmapDescriptor bdOther = BitmapDescriptorFactory
+			.fromResource(R.drawable.icon_gcoding);
+
+	private String contactUserName = null;
 	private FriendUser contactUser = null;
 	private RootUser selfUser = null;
 	private HttpUtils httpUtils = null;
-	private HttpUtils getLocHttpUtils = null;
-	private double conatct_location_latitude;
-	private double contact_location_lontitude;
-	private boolean keepGetLoc = false;
-	Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			// 要做的事情
-			switch (msg.what) {
-			case 0:
+	SharedPreferences share = null;
+	Timer timer = new Timer();
 
-				break;
-			case 1:
-				myLocTv.setText("" + selfUser.getLongitude());
-				otherLocTv.setText("" + contactUser.getLongitude());
-				break;
-			default:
-				break;
+	Handler timeHandler = new Handler() {
+		@SuppressLint("HandlerLeak") public void handleMessage(Message msg) {
+			if (msg.what == 1) {
+				Log.i("OTHER", "自己："+selfUser.getLongitude()+" : "+selfUser.getLatitude());
+				Log.i("OTHER", "朋友："+contactUser.getLongitude()+" : "+contactUser.getLatitude());
+				myLocTv.setText(String.valueOf(selfUser.getLongitude()));
+				otherLocTv.setText(String.valueOf(contactUser.getLongitude()));
+//				LatLng llMe = mMarkerMe.getPosition();
+				LatLng llMeNew = new LatLng(selfUser.getLatitude(),
+						selfUser.getLongitude());
+				mMarkerMe.setPosition(llMeNew);
+//				LatLng llOther = mMarkerOther.getPosition();
+				LatLng llOtherNew = new LatLng(contactUser.getLatitude(),
+						contactUser.getLongitude());
+				mMarkerOther.setPosition(llOtherNew);
 			}
 			super.handleMessage(msg);
-		}
+		};
 	};
-	Handler getAgreeHandle = new Handler() {
-		public void handleMessage(Message msg) {
-			// 要做的事情
-			switch (msg.what) {
-			case 0:
 
-				break;
-			case 1:
-				myLocTv.setText("" + selfUser.getLongitude());
-				otherLocTv.setText("" + contactUser.getLongitude());
-				break;
-			default:
-				break;
-			}
-			super.handleMessage(msg);
+	TimerTask getLocTask = new TimerTask() {
+
+		@Override
+		public void run() {
+			// 需要做的事:发送消息
+			getFriendLocation(ShareLocationActivity.this);
 		}
 	};
 
-	Thread thread = null;
-	Thread getAgreethread = null;
+	TimerTask checkOtherOnlineTask = new TimerTask() {
+
+		@Override
+		public void run() {
+			// 需要做的事:发送消息
+			DatabaseService dbService = new DatabaseService(
+					ShareLocationActivity.this);
+			dbService.createShareLocationTable();
+			if (dbService.getShareLocationStatus(contactUserName) == Constants.STATUS_ONLINE) {
+				// 用户已同意分享 则取消 检查是否接收到用户同意的任务
+				checkOtherOnlineTask.cancel();
+				// 然后开始执行获取用户的位置信息
+				timer.schedule(getLocTask, 1000, 1000); // 1s后执行task,经过1s再次执行
+			}
+			dbService.close();
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.share_location);
 		Intent intent = getIntent();
-
-		Bundle bundle = intent.getBundleExtra("contactUser");
-		contactUser = (FriendUser) bundle.getSerializable("contactUser");
+		Bundle bundle = intent.getBundleExtra("contactUserName");
+		this.contactUserName = bundle.getString("contactUserName");
+		DatabaseService dbService = new DatabaseService(this);
+		dbService.createFriendTable();
+		this.contactUser = dbService.findFriendInfo(this.contactUserName);
 		initComponent();
 	}
 
-	private void initComponent() {
+	private void initRootUser() {
 		selfUser = RootUser.getInstance();
-		SharedPreferences share = getSharedPreferences(
-				Constants.SHARE_USERINFO, MODE_PRIVATE);
+		share = getSharedPreferences(Constants.SHARE_USERINFO, MODE_PRIVATE);
+		selfUser.setLocation(RootUser.getInstance().getLocation());
 		selfUser.setName(share.getString("app_user", null));
 		selfUser.setNickname(share.getString("app_user_nickname", null));
 		// selfUser.setPic_url(share.getString("app_user_pic", null));
 		selfUser.setSex(share.getString("app_user_sex", null));
 		selfUser.setAddress(share.getString("app_user_address", null));
 		selfUser.setSignature(share.getString("app_user_signature", null));
-		shareMapView = (MapView) findViewById(R.id.shareMapView);
-		logoutShareBtn = (Button) findViewById(R.id.closeShareBtn);
-		logoutShareBtn.setOnClickListener(this);
-		addShareBtn = (Button) findViewById(R.id.addShareBtn);
-		addShareBtn.setOnClickListener(this);
-		myNameTv = (TextView) findViewById(R.id.tv_me_name);
-		myLocTv = (TextView) findViewById(R.id.tv_me_loc);
-		otherNameTv = (TextView) findViewById(R.id.tv_contact_name);
-		otherLocTv = (TextView) findViewById(R.id.tv_contact_loc);
+	}
 
-		// 一开始都能看到自己的位置
+	private void setValue() {
 		myNameTv.setText(selfUser.getName());
 		myLocTv.setText("" + selfUser.getLongitude());
 		otherNameTv.setText(contactUser.getName());
 		otherLocTv.setText("" + contactUser.getLongitude());
-		// 我自己请求别人 的位置共享, 一开始就监控 别人是否同意
-		if (contactUser.getStatus_share() == Constants.SELF_REQUEST_OTHER) {
-			addShareBtn.setVisibility(android.view.View.INVISIBLE);
-			Toast.makeText(this, "自己请求分享别人的位置，加广播监听", Toast.LENGTH_SHORT).show();
-			//TODO  暂时 
-			if(thread ==null){
-				thread = new Thread(new GetLocationThread());
-				keepGetLoc = true;
-				thread.start();
+		httpUtils = new HttpUtils();
+		httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// 设置超时时间
+	}
+
+	private void initComponent() {
+		mMapView = (MapView) findViewById(R.id.shareMapView);
+		logoutShareBtn = (Button) findViewById(R.id.closeShareBtn);
+		logoutShareBtn.setOnClickListener(this);
+		myNameTv = (TextView) findViewById(R.id.tv_me_name);
+		myLocTv = (TextView) findViewById(R.id.tv_me_loc);
+		otherNameTv = (TextView) findViewById(R.id.tv_contact_name);
+		otherLocTv = (TextView) findViewById(R.id.tv_contact_loc);
+		initRootUser();
+		initBDMap();
+		setValue();
+		checkTask();
+	}
+
+	private void initBDMap() {
+		mBaiduMap = mMapView.getMap();
+		//缩放
+		LatLng p = new LatLng(selfUser.getLatitude(), selfUser.getLongitude());
+		MapStatus msu  = new MapStatus.Builder().target(p).zoom(6.0f).build();
+//		MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(6.0f);
+		MapStatusUpdate sss = MapStatusUpdateFactory.newMapStatus(msu);
+		mBaiduMap.setMapStatus(sss);
+		initOverlay();
+	}
+	
+	private void initOverlay(){
+		LatLng llMe = new LatLng(selfUser.getLatitude(), selfUser.getLongitude());
+		MarkerOptions ooMe = new MarkerOptions().position(llMe).icon(bdMe)
+				.zIndex(9);
+		mMarkerMe = (Marker) (mBaiduMap.addOverlay(ooMe));
+		
+		LatLng llOther = new LatLng(contactUser.getLatitude(), contactUser.getLongitude());
+		MarkerOptions ooOther = new MarkerOptions().position(llOther).icon(bdOther)
+				.zIndex(9);
+		mMarkerOther = (Marker) (mBaiduMap.addOverlay(ooOther));
+	}
+
+	private void checkTask() {
+		DatabaseService dbService = new DatabaseService(this);
+		dbService.createShareLocationTable();
+
+		if (dbService.getShareLocationType(contactUserName) == Constants.TYPE_FROME_OTHER) {
+			if (dbService.getShareLocationStatus(contactUserName) == Constants.STATUS_ONLINE) {
+				timer.schedule(getLocTask, 1000, 1000); // 1s后执行task,经过1s再次执行
 			}
-//			getAgreethread = new Thread(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					// TODO 改为 boolean
-//					while (true) {
-//						if (contactUser.getStatus_agree() == Constants.OTHER_AGREE_SHARE)
-//							thread = new Thread(new GetLocationThread());
-//						keepGetLoc = true;
-//						thread.start();
-//					}
-//				}
-//			});
-//			getAgreethread.start();
-		} else if (contactUser.getStatus_share() == Constants.OTHER_REQUEST_SELF) {
-			Toast.makeText(this, "别人请求分享自己的位置", Toast.LENGTH_SHORT).show();
-//			if(thread ==null){
-//				thread = new Thread(new GetLocationThread());
-//				thread.start();
-//			}
-			// 别人请求我自己 的位置共享, 添加 同意按钮, 同意则显示比人的位置， agreeAddRequest();
-			addShareBtn.setVisibility(android.view.View.VISIBLE);
+		} else if (dbService.getShareLocationType(contactUserName) == Constants.TYPE_FROME_ME) {
+			if (dbService.getShareLocationStatus(contactUserName) == Constants.STATUS_OFFLINE) {
+				timer.schedule(checkOtherOnlineTask, 1000, 1000); // 1s后执行task,经过1s再次执行
+			} else if (dbService.getShareLocationStatus(contactUserName) == Constants.STATUS_ONLINE) {
+				timer.schedule(getLocTask, 1000, 1000); // 1s后执行task,经过1s再次执行
+			}
 		}
 	}
 
 	@Override
 	protected void onPause() {
+		timer.cancel();
+		// MapView的生命周期与Activity同步，当activity挂起时需调用MapView.onPause()
+		mMapView.onPause();
 		super.onPause();
 	}
 
 	@Override
 	protected void onResume() {
+		// MapView的生命周期与Activity同步，当activity恢复时需调用MapView.onResume()
+		mMapView.onResume();
 		super.onResume();
+		// initRootUser();
+		// setValue();
+		// checkTask();
 	}
 
-	@SuppressWarnings("deprecation")
+	@Override
+	protected void onDestroy() {
+		// MapView的生命周期与Activity同步，当activity销毁时需调用MapView.destroy()
+		mMapView.onDestroy();
+		super.onDestroy();
+		// 回收 bitmap 资源
+		bdMe.recycle();
+		bdOther.recycle();
+	}
+
 	@Override
 	public void onClick(View v) {
 		// 加入共享 发送同意加入共享请求
@@ -186,105 +242,21 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 			Toast.makeText(this, "无可用网络", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		//允许共享
-		if (v.getId() == R.id.addShareBtn) {
-			// 开始接收 好友的位置
-			if (!thread.isAlive()) {
-				keepGetLoc = true;
-				thread.start();
-				agreeAddRequest(this);
-				// 同意之后，就只能由退出键了
-				addShareBtn.setVisibility(android.view.View.INVISIBLE);
-			}
-			// agreeAddRequest(this, );
-		} else if (v.getId() == R.id.closeShareBtn) {
-			// 结束
-			for (int i = 0; i < Constants.requestShareUserList.size(); i++) {
-				if (selfUser.getName().equals(
-						Constants.requestShareUserList.get(i).getName())) {
-					Constants.requestShareUserList.remove(i);
-					if (thread.isAlive()) {
-						keepGetLoc = false;
-						// TODO
-					}
-					finish();
-					break;
-				}
-			}
+		if (v.getId() == R.id.closeShareBtn) {
+			// TODO 发送关闭信号到服务器，另一端收到信号后停止接收。
+			timer.cancel();
+			DatabaseService dbService = new DatabaseService(this);
+			dbService.createShareLocationTable();
+			dbService.deleteShareLocationInfo(contactUserName);
+			dbService.close();
+			finish();
 		}
 	}
 
-	private void agreeAddRequest(final Context activity) {
-		httpUtils = new HttpUtils();
-		httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// 设置超时时间
-		SharedPreferences share = activity.getSharedPreferences(
-				Constants.SHARE_USERINFO, Context.MODE_PRIVATE);
+	private void getFriendLocation(final Activity activity) {
 		RequestParams params = new RequestParams();
 		JSONObject json = new JSONObject();
 		try {
-			json.put("clientName", share.getString("app_user", null));
-			json.put("agreeShareUserName", contactUser.getName());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		params.addBodyParameter("agreeShareLoc", json.toString());
-		httpUtils.send(HttpMethod.POST, Constants.HOST
-				+ Constants.AGREE_SHARE_MY_LOCATION, params,
-				new RequestCallBack<String>() {
-					@Override
-					public void onFailure(HttpException arg0, String arg1) {
-						// TODO 服务器验证
-						Toast.makeText(activity, "失败", Toast.LENGTH_SHORT)
-								.show();
-					}
-
-					@Override
-					public void onSuccess(ResponseInfo<String> arg0) {
-						Log.i("TEST_REC", "接收到的结果为---》" + arg0.result);
-						JSONObject info;
-						try {
-							info = new JSONObject(arg0.result);
-							if (info.getString("agreeShareLoc").equals("true")) {
-								// TODO 保存新朋友到本地数据库, 删除这个朋友在数据库中的请求
-								Toast.makeText(activity, "已同意共享",
-										Toast.LENGTH_SHORT).show();
-							} else {
-								// Toast.makeText(activity,
-								// info.getString("message"),
-								// Toast.LENGTH_SHORT).show();
-							}
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-					}
-				});
-	}
-
-	public class GetLocationThread implements Runnable {
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			while (keepGetLoc) {
-				try {
-					Thread.sleep(1000);// 线程暂停1秒，单位毫秒
-					getFriendLocation(ShareLocationActivity.this);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	private void getFriendLocation(final Context activity) {
-		httpUtils = new HttpUtils();
-		httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// 设置超时时间
-		SharedPreferences share = getSharedPreferences(
-				Constants.SHARE_USERINFO, Context.MODE_PRIVATE);
-		RequestParams params = new RequestParams();
-		JSONObject json = new JSONObject();
-		try {
-			json.put("clientName", share.getString("app_user", null));
 			json.put("getLocFriendName", contactUser.getName());
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -297,8 +269,6 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 					public void onFailure(HttpException arg0, String arg1) {
 						// TODO 服务器验证
 						Log.i("TEST_REC", "没收到" + contactUser.getName() + "的位置");
-						// Toast.makeText(activity, "已同意",
-						// Toast.LENGTH_SHORT).show();
 					}
 
 					@Override
@@ -312,7 +282,7 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 										.getDouble("location_latitude"));
 								contactUser.setLongitude(info
 										.getDouble("location_lontitude"));
-								Log.i("TEST_REC",
+								Log.i("OTHER",
 										contactUser.getName()
 												+ "的位置:"
 												+ "纬度："
@@ -321,12 +291,10 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 												+ info.getDouble("location_lontitude"));
 								Message message = new Message();
 								message.what = 1;
-								handler.sendMessage(message);// 发送消息
+								timeHandler.sendMessage(message);// 发送消息
 							} else {
-								Toast.makeText(activity,
-										info.getString("message"),
-										Toast.LENGTH_SHORT).show();
-
+								Log.i("TEST_REC", "获取" + contactUser.getName()
+										+ "的位置失败");
 							}
 						} catch (JSONException e) {
 							e.printStackTrace();

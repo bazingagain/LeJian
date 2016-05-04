@@ -87,8 +87,9 @@ public class AddFriendListviewAdapter extends BaseAdapter {
 		friend_pic = (ImageView) view.findViewById(R.id.add_friend_pic);
 		if (bitmap != null) {
 			friend_pic.setImageBitmap(bitmap);
+		}else{
+			 friend_pic.setImageDrawable(this.context.getResources().getDrawable(android.R.drawable.ic_menu_gallery));
 		}
-		// friend_pic.setImageDrawable(this.context.getResources().getDrawable(android.R.drawable.ic_menu_gallery));
 		friendName = (TextView) view.findViewById(R.id.add_friend_name);
 		friendName.setText((CharSequence) listFriend.get(position).getName());
 

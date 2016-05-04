@@ -13,9 +13,11 @@ import android.view.View.OnClickListener;
 import android.widget.Adapter;
 import android.widget.Toast;
 
+import com.Leon.lejian.LoginActivity;
 import com.Leon.lejian.adapter.AddFriendListviewAdapter;
 import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.FriendUser;
+import com.Leon.lejian.service.DatabaseService;
 import com.Leon.lejian.view.MyButton;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -88,9 +90,9 @@ public class MyOnClickListener implements OnClickListener {
 							String arg1) {
 						myDialog.dismiss();
 						//TODO 服务器验证
-						Constants.contactUserList.add(friendUser);
-						Constants.requestUserList.remove(index);
-						Toast.makeText(activity, "已同意", Toast.LENGTH_SHORT).show();
+//						Constants.contactUserList.add(friendUser);
+//						Constants.requestUserList.remove(index);
+						Toast.makeText(activity, "用户不在线", Toast.LENGTH_SHORT).show();
 					}
 
 					@Override
@@ -101,7 +103,12 @@ public class MyOnClickListener implements OnClickListener {
 								info = new JSONObject(arg0.result);
 								if(info.getString("saveAgree").equals("true")){
 									myDialog.dismiss();
-									Constants.contactUserList.add(friendUser);
+									
+									DatabaseService dbService = new DatabaseService(context);
+									dbService.createFriendTable();
+									dbService.saveFriendInfo(friendUser);
+									dbService.close();
+//									Constants.contactUserList.add(friendUser);
 									Constants.requestUserList.remove(index);
 									adapter.notifyDataSetChanged();
 									//TODO 保存新朋友到本地数据库, 删除这个朋友在数据库中的请求 

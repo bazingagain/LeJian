@@ -270,7 +270,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 						Log.i("FRIEND", info.toString());
 						//先只下朋友的姓名
 						FriendUser friendUser = new FriendUser(info.getString("friendName"), info.getString("nick_name"), info.getString("pic_url"), info.getString("sex"), info.getString("address"), info.getString("signature"));
-//						dbService.dropTable();  //退出时删除用户 关系表
 						dbService.saveFriendInfo(friendUser);
 						download(info.getString("friendName"), "sync");
 					}

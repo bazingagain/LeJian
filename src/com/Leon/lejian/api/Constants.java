@@ -18,17 +18,20 @@ import com.Leon.lejian.bean.FriendUser;
 
 public class Constants {
 //	public static final String HOST = "HTTP://182.254.234.35/myla/public";
-	public static final String HOST = "HTTP://125.81.69.39/myla/public";
-	public static final String HOST_PIC_RESOURCE = "HTTP://125.81.69.39/myla/storage/app/userPic/";
+	public static final String HOST = "HTTP://219.153.223.123/myla/public";
+	public static final String HOST_PIC_RESOURCE = "HTTP://219.153.223.123/myla/storage/app/userPic/";
 	public static final String REGISTER_PATH = "/userRegister";
 	public static final String LOGIN_PATH = "/userLogin";
 	public static final String ADD_PATH = "/userAdd";
 	public static final String AGREE_PATH = "/userAgree";
 
 	public static final String SYNC_RELATION_TABLE = "/userSyncRelationTable";
-	
-	
 	public static final String SEND_LOCATION_PATH = "/userSetLocation";
+	
+	public static final int TYPE_FROME_ME = 1;
+	public static final int TYPE_FROME_OTHER = 2;
+	public static final int STATUS_ONLINE = 1;
+	public static final int STATUS_OFFLINE = 2;
 	
 	
 	public static final String SHARE_LOCATION_PATH = "/userShareLocation";
@@ -46,16 +49,13 @@ public class Constants {
 	
 	public static final String USER_NAME = "default_user";
 	public static final String SHARE_USERINFO = "SHARE_USERINFO";
-	public static final int SELF_REQUEST_OTHER = 1; 
-	public static final int OTHER_REQUEST_SELF = 2; 
 	
-	public static final int OTHER_AGREE_SHARE = 1; 
 	
 	public static final String DEBUG = "DEBUG_INFO";
 	
 	public static ArrayList<FriendUser> contactUserList = new ArrayList<FriendUser>();
 	public static ArrayList<FriendUser> requestUserList = new ArrayList<FriendUser>();
-	public static ArrayList<FriendUser> requestShareUserList = new ArrayList<FriendUser>();
+//	public static ArrayList<FriendUser> requestShareUserList = new ArrayList<FriendUser>();
 	
 	public static byte[] userPic = null;
 	

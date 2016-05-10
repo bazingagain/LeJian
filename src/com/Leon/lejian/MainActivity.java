@@ -4,10 +4,8 @@ package com.Leon.lejian;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -17,13 +15,11 @@ import android.view.Menu;
 import android.view.ViewConfiguration;
 import android.view.Window;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import cn.jpush.android.api.JPushInterface;
-import cn.jpush.android.data.JPushView;
 
 import com.Leon.lejian.api.Constants;
-import com.Leon.lejian.bean.LocalUser;
+//import com.Leon.lejian.bean.LocalUser;
 import com.Leon.lejian.fragment.ContactFragment;
 import com.Leon.lejian.fragment.MapFragment;
 import com.Leon.lejian.fragment.MeFragment;
@@ -39,7 +35,6 @@ public class MainActivity extends FragmentActivity implements
 	RadioGroup radioGroup;
 	FragmentManager manager = getSupportFragmentManager();
 	FragmentTransaction transaction;
-	public static LocalUser localUser = null;
 	/**
 	 * ¼ì²éÊÇ·ñµÇÂ¼
 	 * @return

@@ -1,5 +1,7 @@
 package com.Leon.lejian;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -10,7 +12,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -64,6 +69,8 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 			.fromResource(R.drawable.icon_gcoding);
 	BitmapDescriptor bdOther = BitmapDescriptorFactory
 			.fromResource(R.drawable.icon_gcoding);
+//	BitmapDescriptor bdMe = null;
+//	BitmapDescriptor bdOther = null;
 
 	private String contactUserName = null;
 	private FriendUser contactUser = null;
@@ -71,7 +78,6 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 	private HttpUtils httpUtils = null;
 	SharedPreferences share = null;
 	Timer timer = new Timer();
-
 	Handler timeHandler = new Handler() {
 		@SuppressLint("HandlerLeak") public void handleMessage(Message msg) {
 			if (msg.what == 1) {
@@ -132,6 +138,21 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 		initComponent();
 	}
 
+	private void initComponent() {
+		mMapView = (MapView) findViewById(R.id.shareMapView);
+		logoutShareBtn = (Button) findViewById(R.id.closeShareBtn);
+		logoutShareBtn.setOnClickListener(this);
+		myNameTv = (TextView) findViewById(R.id.tv_me_name);
+		myLocTv = (TextView) findViewById(R.id.tv_me_loc);
+		otherNameTv = (TextView) findViewById(R.id.tv_contact_name);
+		otherLocTv = (TextView) findViewById(R.id.tv_contact_loc);
+		initRootUser();
+//		bdMe = getUserIcon(selfUser.getName());
+//		bdOther = getUserIcon(contactUserName);
+		initBDMap();
+		setValue();
+		checkTask();
+	}
 	private void initRootUser() {
 		selfUser = RootUser.getInstance();
 		share = getSharedPreferences(Constants.SHARE_USERINFO, MODE_PRIVATE);
@@ -143,30 +164,6 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 		selfUser.setAddress(share.getString("app_user_address", null));
 		selfUser.setSignature(share.getString("app_user_signature", null));
 	}
-
-	private void setValue() {
-		myNameTv.setText(selfUser.getName());
-		myLocTv.setText("" + selfUser.getLongitude());
-		otherNameTv.setText(contactUser.getName());
-		otherLocTv.setText("" + contactUser.getLongitude());
-		httpUtils = new HttpUtils();
-		httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// 设置超时时间
-	}
-
-	private void initComponent() {
-		mMapView = (MapView) findViewById(R.id.shareMapView);
-		logoutShareBtn = (Button) findViewById(R.id.closeShareBtn);
-		logoutShareBtn.setOnClickListener(this);
-		myNameTv = (TextView) findViewById(R.id.tv_me_name);
-		myLocTv = (TextView) findViewById(R.id.tv_me_loc);
-		otherNameTv = (TextView) findViewById(R.id.tv_contact_name);
-		otherLocTv = (TextView) findViewById(R.id.tv_contact_loc);
-		initRootUser();
-		initBDMap();
-		setValue();
-		checkTask();
-	}
-
 	private void initBDMap() {
 		mBaiduMap = mMapView.getMap();
 		//缩放
@@ -177,6 +174,16 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 		mBaiduMap.setMapStatus(sss);
 		initOverlay();
 	}
+
+	private void setValue() {
+		myNameTv.setText(selfUser.getName());
+		myLocTv.setText("" + selfUser.getLongitude());
+		otherNameTv.setText(contactUser.getName());
+		otherLocTv.setText("" + contactUser.getLongitude());
+		httpUtils = new HttpUtils();
+		httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// 设置超时时间
+	}
+
 	
 	private void initOverlay(){
 		LatLng llMe = new LatLng(selfUser.getLatitude(), selfUser.getLongitude());
@@ -249,6 +256,9 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 			dbService.createShareLocationTable();
 			dbService.deleteShareLocationInfo(contactUserName);
 			dbService.close();
+			//发送关闭共享链，更新服务器端的  sharelocme 的 状态
+			closeShareLocation(this);
+			Constants.decShareNum(this);
 			finish();
 		}
 	}
@@ -301,6 +311,84 @@ public class ShareLocationActivity extends Activity implements OnClickListener {
 						}
 					}
 				});
+	}
+	
+	private void closeShareLocation(final Activity activity) {
+		RequestParams params = new RequestParams();
+		JSONObject json = new JSONObject();
+		try {
+			json.put("clientName", selfUser.getName());
+			json.put("contactName", contactUser.getName());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		params.addBodyParameter("closeShareLocation", json.toString());
+		HttpUtils httpUtils = new HttpUtils();
+		httpUtils.send(HttpMethod.POST, Constants.HOST
+				+ Constants.CLOSE_SHARE_LOCATION, params,
+				new RequestCallBack<String>() {
+					@Override
+					public void onFailure(HttpException arg0, String arg1) {
+						// TODO 服务器验证
+						Log.i("TEST_REC", "没收到关闭"+selfUser.getName()+">"+contactUser.getName()+"的共享链");
+					}
+
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+						JSONObject info;
+						try {
+							info = new JSONObject(arg0.result);
+							if (info.getString("agreeCloseShareLoc").equals("true")) {
+								Log.i("TEST_REC", "收到关闭"+selfUser.getName()+">"+contactUser.getName()+"的共享链");
+
+							} 
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+	}
+	
+	private BitmapDescriptor getUserIcon(String userName){
+		BitmapDescriptor bd = null;
+		Bitmap bitmap = null;
+		byte[] userIconByte = null;
+		String lejianUserPicPath = null;
+		String fileName = null;
+		File sdCardDir = null;
+		try {
+			sdCardDir = Environment.getExternalStorageDirectory();
+			fileName = "USER_" + Constants.md5(userName)
+					+ ".jpg";
+			lejianUserPicPath = sdCardDir.getCanonicalPath()
+					+ "/LeJianTempUserPic/" + fileName;
+			File lejianTempDir = null;
+			lejianTempDir = new File(sdCardDir.getCanonicalPath()
+					+ "/LeJianTempUserPic");
+			if ((lejianTempDir == null)||!lejianTempDir.exists())
+				lejianTempDir.mkdir();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		File picFile = new File(lejianUserPicPath);
+		// TODO 判断是否存在 头像文件
+		Log.i("SETICON", userName);
+		if ((picFile == null) || !picFile.exists()) {
+			bd = BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
+		} else {
+			userIconByte = Constants.getBytesFromFile(picFile);
+			if (userIconByte != null) {
+				bitmap = BitmapFactory.decodeByteArray(userIconByte, 0,
+						userIconByte.length);
+			}
+			if (bitmap != null) {
+				bd  = BitmapDescriptorFactory.fromPath(lejianUserPicPath);
+			} else {
+				bd = BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
+			}
+		}
+		return bd;
 	}
 
 }

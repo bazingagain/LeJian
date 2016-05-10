@@ -139,6 +139,8 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		edit.putString("app_user_sex", null);
 		edit.putString("app_user_address", null);
 		edit.putString("app_user_signature", null);
+		edit.putInt("app_user_sharenum", 0);
+		edit.putBoolean("app_user_tempshare", false);
 		edit.commit();
 		
 		rootUser = RootUser.getInstance();
@@ -147,6 +149,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		rootUser.setSex(null);
 		rootUser.setAddress(null);
 		rootUser.setSignature(null);
+		rootUser.setShareNum(0);
 	}
 	
 	private void creeateRelationTable(){

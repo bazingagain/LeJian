@@ -17,6 +17,7 @@
     
     
     <string name="login_btn">登录</string>
+    <string name="login_qq">第三方登录</string>
     <string name="add">添加好友</string>
     <string name="startlocation">开始定位</string>
     <string name="stoplocation">停止定位</string>
@@ -26,7 +27,7 @@
     <string name="group_contact">通信录</string>
     <string name="group_me">我</string>
     <string name="action_plus">功能</string>
-    <string name="plus_group_chat">发起群聊</string>
+    <string name="plus_realtime_share">轨迹分享</string>
     <string name="plus_add_friend">添加朋友</string>
     <string name="plus_location_share">位置分享</string>
     <string name="plus_scan">扫描二维码</string>
@@ -119,6 +120,7 @@
 		
     <!-- user_setting -->
     <string name="modify_password">修改密码</string>
+    <string name="tempshare">开启临时共享</string>
     <string name="feedback">反馈</string>
     <string name="about">关于</string>
     <!-- feedback -->

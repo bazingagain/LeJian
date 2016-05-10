@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -24,10 +25,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
+import com.Leon.lejian.ContactProfileActivity;
 import com.Leon.lejian.R;
 import com.Leon.lejian.ShareLocationActivity;
 import com.Leon.lejian.adapter.ShareLocListViewAdapter;
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.bean.RootUser;
 import com.Leon.lejian.service.DatabaseService;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -132,6 +135,7 @@ public class ShareNotificationFragment extends Fragment implements
 						dbService.updateShareLocationStatus(name,
 								Constants.STATUS_ONLINE);
 						dbService.close();
+						Constants.addShareNum(getActivity());
 						comeShareActivity(name);
 						agreeAddRequest(getActivity(), name);
 					}
@@ -152,13 +156,25 @@ public class ShareNotificationFragment extends Fragment implements
 					public void onClick(DialogInterface dialog, int which) {
 						// 可以发送退出共享
 						alertDialog.dismiss();
-						// Constants.requestShareUserList.remove(position);
 						DatabaseService dbService = new DatabaseService(
 								getActivity());
 						dbService.createShareLocationTable();
+						
+						String shareName = allShareFriend.get(position);
+						if (dbService.getShareLocationType(shareName) == Constants.TYPE_FROME_ME) {
+							//是自己先发出的请求的话，就关闭自己到 朋友的共享链
+							closeShareLocation(getActivity(), shareName);
+							Constants.decShareNum(getActivity());
+						}else if(dbService.getShareLocationType(shareName) == Constants.TYPE_FROME_OTHER){
+							//这里一定要判断是否 是同意，因为不同意则 并没有增加共享，也就无从删除
+							if (dbService.getShareLocationStatus(shareName) == Constants.STATUS_ONLINE) {
+								closeShareLocation(getActivity(), shareName);
+								Constants.decShareNum(getActivity());
+							}
+						}
+						// 更新allshare
 						dbService.deleteShareLocationInfo(position);
 						dbService.close();
-						// 更新allshare
 						allShareFriend = getShareFriendFromDatabase();
 						adapter.notifyDataSetChanged();
 						updateListView();
@@ -205,4 +221,44 @@ public class ShareNotificationFragment extends Fragment implements
 					}
 				});
 	}
+	
+	private void closeShareLocation(final Activity activity, final String contactName) {
+		SharedPreferences share = activity.getSharedPreferences(
+    			Constants.SHARE_USERINFO, Context.MODE_PRIVATE);
+		final String clientName = share.getString("app_user", null);
+		RequestParams params = new RequestParams();
+		JSONObject json = new JSONObject();
+		try {
+			json.put("clientName", clientName);
+			json.put("contactName", contactName);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		params.addBodyParameter("closeShareLocation", json.toString());
+		HttpUtils httpUtils = new HttpUtils();
+		httpUtils.send(HttpMethod.POST, Constants.HOST
+				+ Constants.CLOSE_SHARE_LOCATION, params,
+				new RequestCallBack<String>() {
+					@Override
+					public void onFailure(HttpException arg0, String arg1) {
+						// TODO 服务器验证
+						Log.i("TEST_REC", "没收到关闭"+clientName+">"+contactName+"的共享链");
+					}
+
+					@Override
+					public void onSuccess(ResponseInfo<String> arg0) {
+						JSONObject info;
+						try {
+							info = new JSONObject(arg0.result);
+							if (info.getString("agreeCloseShareLoc").equals("true")) {
+								Log.i("TEST_REC", "ShareNotificationFragment.长按删除, 收到关闭"+clientName+">"+contactName+"的共享链");
+
+							} 
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+	}
+	
 }

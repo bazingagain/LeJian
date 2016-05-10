@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.FriendUser;
+import com.Leon.lejian.bean.RootUser;
 import com.Leon.lejian.service.DatabaseService;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -130,6 +131,7 @@ public class ContactProfileActivity extends Activity implements OnClickListener 
 									// 发送到服务器成功
 									// 建立实时位置分享Activity
 									// 等待好友加入
+									Constants.addShareNum(ContactProfileActivity.this);
 									Log.d(Constants.DEBUG, "等待用户加入共享");
 									finish();
 									// 加入一个共享对话
@@ -157,6 +159,7 @@ public class ContactProfileActivity extends Activity implements OnClickListener 
 					});
 		}
 	}
+	
 
 	private boolean check() {
 		if (!Constants.isNetworkAvailable(this)) {

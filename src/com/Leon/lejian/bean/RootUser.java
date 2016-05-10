@@ -9,6 +9,14 @@ public class RootUser extends FriendUser{
 	private RootUser(){
 	};
 	private BDLocation location = null;
+	private int shareNum = 0;
+	public int getShareNum() {
+		return shareNum;
+	}
+
+	public void setShareNum(int shareNum) {
+		this.shareNum = shareNum;
+	}
 	//饿汉模式（单例模式）-线程安全
 	private static final RootUser  testUser = new RootUser();
 	public BDLocation getLocation() {

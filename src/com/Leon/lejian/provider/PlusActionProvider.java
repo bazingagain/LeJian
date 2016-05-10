@@ -1,10 +1,19 @@
 package com.Leon.lejian.provider;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cn.jpush.android.api.JPushInterface;
+
 import com.Leon.lejian.AddFriendsActivity;
+import com.Leon.lejian.LoginActivity;
 import com.Leon.lejian.R;
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.bean.FriendUser;
 import com.Leon.lejian.bean.RootUser;
+import com.Leon.lejian.service.DatabaseService;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.geocode.GeoCodeResult;
@@ -16,13 +25,23 @@ import com.baidu.mapapi.search.share.LocationShareURLOption;
 import com.baidu.mapapi.search.share.OnGetShareUrlResultListener;
 import com.baidu.mapapi.search.share.ShareUrlResult;
 import com.baidu.mapapi.search.share.ShareUrlSearch;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.zxing.activity.CaptureActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.sax.StartElementListener;
+import android.util.Log;
 import android.view.ActionProvider;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -58,11 +77,40 @@ public class PlusActionProvider extends ActionProvider implements
 	@Override
 	public void onPrepareSubMenu(SubMenu subMenu) {
 		subMenu.clear();
-		subMenu.add(context.getString(R.string.plus_group_chat))
+		subMenu.add(context.getString(R.string.plus_realtime_share))
 				.setIcon(R.drawable.ofm_group_chat_icon)
 				.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 					@Override
 					public boolean onMenuItemClick(MenuItem item) {
+						final SharedPreferences share = context.getSharedPreferences(
+								Constants.SHARE_USERINFO, context.MODE_PRIVATE);
+						if(!Constants.isNetworkAvailable(context)){
+							Toast.makeText(context, "无可用网络", Toast.LENGTH_SHORT).show();
+							return true;
+						}
+						if(share.getBoolean("app_user_tempshare", false)){
+							startSendShareUrl(share);
+						}else{
+							new AlertDialog.Builder(context)
+							.setMessage("确定开启临时共享？")
+							.setPositiveButton("确定",
+									new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(DialogInterface dialog,
+												int which) {
+											updateTempshare(share.getString("app_user", null), share);
+										}
+									})
+							.setNegativeButton("取消",
+									new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(DialogInterface dialog,
+												int which) {
+										}
+									}).show();
+						}
 						return true;
 					}
 				});
@@ -96,7 +144,6 @@ public class PlusActionProvider extends ActionProvider implements
 								context,
 								String.format("当前位置： %f，%f", latLng.latitude, latLng.longitude),
 								Toast.LENGTH_SHORT).show();
-						
 						return true;
 					}
 				});
@@ -134,11 +181,19 @@ public class PlusActionProvider extends ActionProvider implements
 		context.startActivity(Intent.createChooser(it, "将位置分享到"));
 
 	}
+	public void startSendShareUrl(SharedPreferences share){
+		Intent it = new Intent(Intent.ACTION_SEND);
+		it.putExtra(Intent.EXTRA_TEXT,
+				"您的朋友("+share.getString("app_user", null)+")通过乐见与您分享一个实时轨迹: "
+						+ " -- " + Constants.HOST + Constants.SHOW_SIGNAL_USER_LOC+"/"+share.getString("app_user", null));
+		it.setType("text/plain");
+		context.startActivity(Intent.createChooser(it, "将位置分享到"));
+	}
 
 	@Override
 	public void onGetPoiDetailShareUrlResult(ShareUrlResult result) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -159,6 +214,46 @@ public class PlusActionProvider extends ActionProvider implements
 				.location(result.getLocation()).snippet("测试分享点")
 				.name(result.getAddress()));
 		
+	}
+	
+	private void updateTempshare(String userNameStr ,final SharedPreferences share){
+		RequestParams params = new RequestParams();
+		JSONObject json = new JSONObject();
+		try {
+			json.put("clientName", userNameStr);
+			json.put("tempshare", true);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		params.addBodyParameter("updateTempshare", json.toString());
+//		httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// 
+		
+		HttpUtils http = new HttpUtils();
+		http.send(HttpMethod.POST,Constants.HOST+Constants.UPDATE_TEMPSHARE, params, new RequestCallBack<String>() {
+
+			@Override
+			public void onFailure(HttpException arg0, String arg1) {
+				Log.e("UPDATE", "更新临时共享出错");
+				
+			}
+
+			public void onSuccess(ResponseInfo<String> arg0) {
+				Log.d("UPDATE", "更新临时共享成功");
+				try {
+					JSONObject json = new JSONObject(arg0.result);
+					if(json.getString("saveTempshare").equals("true")){
+						SharedPreferences.Editor edit = share.edit(); // 编辑文件
+						edit.putBoolean("app_user_tempshare", true);
+						edit.commit();
+						startSendShareUrl(share);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
 	}
 
 }

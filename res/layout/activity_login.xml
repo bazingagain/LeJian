@@ -53,4 +53,46 @@
         android:background="@drawable/wechat_button_green"
         android:text="@string/register_btn" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/login_registerBtn"
+        android:layout_alignRight="@+id/login_registerBtn"
+        android:layout_below="@+id/login_registerBtn"
+        android:layout_marginTop="40dp" >
+
+        <TextView
+            android:id="@+id/label_qq"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/login_qq" />
+
+        <ImageView
+            android:layout_marginLeft="10dp"
+            android:id="@+id/img_qq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/qq" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/user_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/loginUser"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="27dp"
+        android:src="@null" />
+
+    <TextView
+        android:id="@+id/user_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/user_logo"
+        android:layout_marginLeft="18dp"
+        android:layout_toRightOf="@+id/user_logo"
+        android:text="@null" />
+
 </RelativeLayout>

@@ -11,19 +11,24 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.Leon.lejian.bean.FriendUser;
+import com.Leon.lejian.bean.RootUser;
 
 public class Constants {
 //	public static final String HOST = "HTTP://182.254.234.35/myla/public";
-	public static final String HOST = "HTTP://219.153.223.123/myla/public";
-	public static final String HOST_PIC_RESOURCE = "HTTP://219.153.223.123/myla/storage/app/userPic/";
+//	public static final String HOST_PIC_RESOURCE = "HTTP://182.254.234.35/myla/storage/app/userPic/";
+	public static final String HOST = "http://125.82.60.201/myla/public";
+	public static final String HOST_PIC_RESOURCE = "http://125.82.60.201/myla/storage/app/userPic/";
+	
 	public static final String REGISTER_PATH = "/userRegister";
 	public static final String LOGIN_PATH = "/userLogin";
 	public static final String ADD_PATH = "/userAdd";
 	public static final String AGREE_PATH = "/userAgree";
+	public static final String SHOW_SIGNAL_USER_LOC = "/showSignalUserLoc";
 
 	public static final String SYNC_RELATION_TABLE = "/userSyncRelationTable";
 	public static final String SEND_LOCATION_PATH = "/userSetLocation";
@@ -36,6 +41,7 @@ public class Constants {
 	
 	public static final String SHARE_LOCATION_PATH = "/userShareLocation";
 	public static final String GET_CONTACT_LOCATION = "/getContactLocation";
+	public static final String CLOSE_SHARE_LOCATION = "/closeShareLocation";
 	public static final String AGREE_SHARE_MY_LOCATION = "/agreeShareLocation";
 	
 	
@@ -46,6 +52,7 @@ public class Constants {
 	public static final String SET_PROFILE_SEX = "/userProfile/setSex";
 	public static final String SET_PROFILE_ADDRESS = "/userProfile/setAddress";
 	public static final String SET_PROFILE_NICKNAME = "/userProfile/setNickname";
+	public static final String UPDATE_TEMPSHARE = "/userProfile/updateTempshare";
 	
 	public static final String USER_NAME = "default_user";
 	public static final String SHARE_USERINFO = "SHARE_USERINFO";
@@ -129,5 +136,30 @@ public class Constants {
             hex.append(Integer.toHexString(b & 0xFF));
         }
         return hex.toString();
+    }
+    public static void addShareNum(Context context) {
+		SharedPreferences share = context.getSharedPreferences(
+				Constants.SHARE_USERINFO, Context.MODE_PRIVATE);
+		SharedPreferences.Editor edit = share.edit(); // 编辑文件
+		edit.putInt("app_user_sharenum", share.getInt("app_user_sharenum", 0) + 1);
+		edit.commit();
+		RootUser rootUser = RootUser.getInstance();
+		rootUser.setShareNum(share.getInt("app_user_sharenum", 0));
+	}
+    public static void decShareNum(Context context) {
+    	SharedPreferences share = context.getSharedPreferences(
+    			Constants.SHARE_USERINFO, Context.MODE_PRIVATE);
+    	SharedPreferences.Editor edit = share.edit(); // 编辑文件
+    	if(share.getInt("app_user_sharenum", 0) >= 0){
+    		edit.putInt("app_user_sharenum", share.getInt("app_user_sharenum", 0) - 1);
+    	}
+    	edit.commit();
+    	RootUser rootUser = RootUser.getInstance();
+    	rootUser.setShareNum(share.getInt("app_user_sharenum", 0));
+    }
+    public static int getShareNum(Context context) {
+    	SharedPreferences share = context.getSharedPreferences(
+    			Constants.SHARE_USERINFO, Context.MODE_PRIVATE);
+    	return share.getInt("app_user_sharenum", 0);
     }
 }

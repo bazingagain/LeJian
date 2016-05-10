@@ -12,13 +12,18 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
@@ -27,6 +32,7 @@ import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.FriendUser;
 import com.Leon.lejian.bean.RootUser;
 import com.Leon.lejian.service.DatabaseService;
+import com.Leon.lejian.util.Util;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.HttpHandler;
@@ -34,6 +40,11 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.tencent.connect.UserInfo;
+import com.tencent.connect.auth.QQAuth;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
 public class LoginActivity extends Activity implements OnClickListener {
 	RootUser rootUser= null;
@@ -41,6 +52,13 @@ public class LoginActivity extends Activity implements OnClickListener {
 	Button registerBtn = null;
 	EditText userName = null;
 	EditText password = null;
+	private TextView mUserInfo;
+	private ImageView mUserLogo;
+	ImageView qqImg = null;
+	private final String APP_ID = "1105305633";// æµ‹è¯•æ—¶ä½¿ç”¨ï¼ŒçœŸæ­£å‘å¸ƒçš„æ—¶å€™è¦æ¢æˆè‡ªå·±çš„APP_ID
+	private Tencent mTencent = null;
+	public static QQAuth mQQAuth;
+	private UserInfo mInfo;
 	String userNameStr = null;
 	String passwordStr = null;
 	
@@ -55,13 +73,20 @@ public class LoginActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
+		mQQAuth = QQAuth.createInstance(APP_ID, getApplicationContext());
+		mTencent = Tencent.createInstance(APP_ID, this);
 		initView();
 		loginActivity = this;
 	}
 
 	public void initView() {
+		mUserInfo = (TextView) findViewById(R.id.user_nickname);
+		mUserLogo = (ImageView) findViewById(R.id.user_logo);
+		
 		userName = (EditText) findViewById(R.id.loginUser);
 		password = (EditText) findViewById(R.id.loginPassword);
+		qqImg  =(ImageView) findViewById(R.id.img_qq);
+		qqImg.setOnClickListener(this);
 		loginBtn = (Button) findViewById(R.id.loginBtn);
 		loginBtn.setOnClickListener(this);
 		registerBtn = (Button) findViewById(R.id.login_registerBtn);
@@ -71,6 +96,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+		case R.id.img_qq:
+			onClickLogin();
+			break;
 		case R.id.loginBtn:
 			if (hasError())
 				return;
@@ -81,7 +109,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				json.put("clientName", userNameStr);
 				json.put("password", passwordStr);
 				params.addBodyParameter("login", json.toString());
-				httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// ÉèÖÃ³¬Ê±Ê±¼ä
+				httpUtils.configCurrentHttpCacheExpiry(1000 * 10);// è®¾ç½®è¶…æ—¶æ—¶é—´
 				httpUtils.send(HttpMethod.POST, Constants.HOST
 						+ Constants.LOGIN_PATH, params,
 						new RequestCallBack<String>() {
@@ -89,13 +117,13 @@ public class LoginActivity extends Activity implements OnClickListener {
 							@Override
 							public void onFailure(HttpException arg0,
 									String arg1) {
-								Toast.makeText(getApplicationContext(), "µÇÂ¼Ê§°Ü",
+								Toast.makeText(getApplicationContext(), "ç™»å½•å¤±è´¥",
 										Toast.LENGTH_LONG).show();
 							}
 
 							@Override
 							public void onSuccess(ResponseInfo<String> arg0) {
-								Log.i("TEST_REC", "½ÓÊÕµ½µÄ½á¹ûÎª---¡·" + arg0.result);
+								Log.i("TEST_REC", "æ¥æ”¶åˆ°çš„ç»“æœä¸º---ã€‹" + arg0.result);
 								JSONObject info;
 								try {
 									info = new JSONObject(arg0.result);
@@ -107,7 +135,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 										app_user_sex = info.getString("sex");
 										app_user_address = info.getString("address");
 										app_user_signature = info.getString("signature");
-										//TODO  ÔİÊ±ÓÃJPG  
+										//TODO  æš‚æ—¶ç”¨JPG  
 										download(userNameStr);
 										Intent intent = new Intent(
 												LoginActivity.this,
@@ -115,11 +143,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 										startActivity(intent);
 										createAndSyncRelationTable();
 										overridePendingTransition(R.anim.create_zoomin, R.anim.create_zoomout);
-										//»Ø¸´  JPush  ·şÎñ
+										//å›å¤  JPush  æœåŠ¡
 										if (!JPushInterface
 												.getConnectionState(getApplicationContext())) {
 											Log.d(Constants.DEBUG,
-													"Î´Á¬½Ó£¬ÖØĞÂÁ¬½ÓJpusn Server·şÎñÆ÷");
+													"æœªè¿æ¥ï¼Œé‡æ–°è¿æ¥Jpusn ServeræœåŠ¡å™¨");
 											JPushInterface
 													.init(getApplicationContext());
 											JPushInterface.resumePush(getApplicationContext());
@@ -129,8 +157,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 											public void gotResult(int arg0,
 													String arg1, Set<String> arg2) {
 												if(arg0 == 0){
-													Toast.makeText(getApplicationContext(), "ÉèÖÃ±ğÃû³É¹¦¡·±ğÃû£º"+arg1, Toast.LENGTH_SHORT).show();
-													Log.d(Constants.DEBUG, "ÏñJPush×¢²á±ğÃû³É¹¦");
+													Toast.makeText(getApplicationContext(), "è®¾ç½®åˆ«åæˆåŠŸã€‹åˆ«åï¼š"+arg1, Toast.LENGTH_SHORT).show();
+													Log.d(Constants.DEBUG, "åƒJPushæ³¨å†Œåˆ«åæˆåŠŸ");
 												}
 											}
 											
@@ -156,6 +184,26 @@ public class LoginActivity extends Activity implements OnClickListener {
 			break;
 		}
 	}
+	
+	private void onClickLogin() {
+		if (!mQQAuth.isSessionValid()) {
+			IUiListener listener = new BaseUiListener() {
+				@Override
+				protected void doComplete(JSONObject values) {
+					updateUserInfo();
+				}
+			};
+			mQQAuth.login(this, "all", listener);
+			// mTencent.loginWithOEM(this, "all",
+			// listener,"10000144","10000144","xxxx");
+			mTencent.login(this, "all", listener);
+		} else {
+			//é€€å‡º
+			mQQAuth.logout(this);
+			updateUserInfo();
+		}
+	}
+	
 	@Override
 	public void finish() {
 		super.finish();
@@ -166,10 +214,10 @@ public class LoginActivity extends Activity implements OnClickListener {
 		userNameStr = userName.getText().toString().trim();
 		passwordStr = password.getText().toString().trim();
 		if (userNameStr.isEmpty()) {
-			Toast.makeText(this, "ÓÃ»§Ãû²»ÄÜÎª¿Õ", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "ç”¨æˆ·åä¸èƒ½ä¸ºç©º", Toast.LENGTH_SHORT).show();
 			return true;
 		} else if (passwordStr.isEmpty()) {
-			Toast.makeText(this, "ÃÜÂë²»ÄÜÎª¿Õ", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "å¯†ç ä¸èƒ½ä¸ºç©º", Toast.LENGTH_SHORT).show();
 			return true;
 		}
 		return false;
@@ -178,13 +226,15 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private void changeUserInfo() {
 		SharedPreferences share = getSharedPreferences(
 				Constants.SHARE_USERINFO, MODE_PRIVATE);
-		SharedPreferences.Editor edit = share.edit(); // ±à¼­ÎÄ¼ş
+		SharedPreferences.Editor edit = share.edit(); // ç¼–è¾‘æ–‡ä»¶
 		edit.putString("app_user", userNameStr);
 		edit.putString("app_user_password", passwordStr);
 		edit.putString("app_user_nickname", app_user_nickname);
 		edit.putString("app_user_sex", app_user_sex);
 		edit.putString("app_user_address", app_user_address);
 		edit.putString("app_user_signature", app_user_signature);
+		edit.putInt("app_user_sharenum", 0);
+		edit.putBoolean("app_user_tempshare", false);
 		edit.commit();
 		rootUser = RootUser.getInstance();
 		rootUser.setName(userNameStr);
@@ -192,7 +242,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 		rootUser.setSex(app_user_sex);
 		rootUser.setAddress(app_user_address);
 		rootUser.setSignature(app_user_signature);
-		//Í¬²½ ÓÃ»§ºÃÓÑĞÅÏ¢¡£
+		rootUser.setShareNum(0);
+		//åŒæ­¥ ç”¨æˆ·å¥½å‹ä¿¡æ¯ã€‚
 		
 	}
 
@@ -208,7 +259,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 					picDirFile.mkdir();
 				userPicFile = new File(sdCardDir+"/LeJianUserPic/"+fileName);
 				if(userPicFile.exists()){
-					//Ã¿´ÎÏÂÔØ¶¼¸üĞÂ
+					//æ¯æ¬¡ä¸‹è½½éƒ½æ›´æ–°
 					userPicFile.delete();
 				}
 				lejianUserPicPath = sdCardDir.getCanonicalPath()+"/LeJianUserPic/"+fileName;
@@ -218,22 +269,22 @@ public class LoginActivity extends Activity implements OnClickListener {
 		HttpUtils http = new HttpUtils();
 		HttpHandler handler = http.download(Constants.HOST_PIC_RESOURCE+fileName,
 				lejianUserPicPath,
-		    true, // Èç¹ûÄ¿±êÎÄ¼ş´æÔÚ£¬½Ó×ÅÎ´Íê³ÉµÄ²¿·Ö¼ÌĞøÏÂÔØ¡£·şÎñÆ÷²»Ö§³ÖRANGEÊ±½«´ÓĞÂÏÂÔØ¡£
-		    true, // Èç¹û´ÓÇëÇó·µ»ØĞÅÏ¢ÖĞ»ñÈ¡µ½ÎÄ¼şÃû£¬ÏÂÔØÍê³Éºó×Ô¶¯ÖØÃüÃû¡£
+		    true, // å¦‚æœç›®æ ‡æ–‡ä»¶å­˜åœ¨ï¼Œæ¥ç€æœªå®Œæˆçš„éƒ¨åˆ†ç»§ç»­ä¸‹è½½ã€‚æœåŠ¡å™¨ä¸æ”¯æŒRANGEæ—¶å°†ä»æ–°ä¸‹è½½ã€‚
+		    true, // å¦‚æœä»è¯·æ±‚è¿”å›ä¿¡æ¯ä¸­è·å–åˆ°æ–‡ä»¶åï¼Œä¸‹è½½å®Œæˆåè‡ªåŠ¨é‡å‘½åã€‚
 		    new RequestCallBack<File>() {
 		        @Override
 		        public void onSuccess(ResponseInfo<File> responseInfo) {
 		        	Log.d("DOWNLOAD", responseInfo.result.getPath());
 		        	File userPicFile = new File(Environment.getExternalStorageDirectory()+"/LeJianUserPic/"+fileName);
 		        	Constants.userPic = Constants.getBytesFromFile(userPicFile);
-		        	Log.e("DOWNLOAD", "loginÏÂÔØÓÃ»§Í¼Æ¬³É¹¦");
+		        	Log.e("DOWNLOAD", "loginä¸‹è½½ç”¨æˆ·å›¾ç‰‡æˆåŠŸ");
 		        }
 		        @Override
 		        public void onFailure(HttpException error, String msg) {
-		        	Log.e("DOWNLOAD", "ÏÂÔØÓÃ»§Í¼Æ¬Ê§°Ü");
+		        	Log.e("DOWNLOAD", "ä¸‹è½½ç”¨æˆ·å›¾ç‰‡å¤±è´¥");
 		        }
 		});
-		//µ÷ÓÃcancel()·½·¨Í£Ö¹ÏÂÔØ
+		//è°ƒç”¨cancel()æ–¹æ³•åœæ­¢ä¸‹è½½
 //		handler.cancel();
 	}
 	
@@ -254,13 +305,13 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 			@Override
 			public void onFailure(HttpException arg0, String arg1) {
-				Log.e("SYNC", "µÇÂ¼Ê±Í¬²½ÏÂÔØÓÃ»§ºÃÓÑ¹ØÏµ³ö´í");
+				Log.e("SYNC", "ç™»å½•æ—¶åŒæ­¥ä¸‹è½½ç”¨æˆ·å¥½å‹å…³ç³»å‡ºé”™");
 				
 			}
 
 			@SuppressLint("NewApi") @Override
 			public void onSuccess(ResponseInfo<String> arg0) {
-				Log.d("SYNC", "µÇÂ¼Ê±Í¬²½ÏÂÔØÓÃ»§ºÃÓÑ¹ØÏµ³É¹¦");
+				Log.d("SYNC", "ç™»å½•æ—¶åŒæ­¥ä¸‹è½½ç”¨æˆ·å¥½å‹å…³ç³»æˆåŠŸ");
 				try {
 					JSONArray jsonArray = new JSONArray(arg0.result);
 					DatabaseService dbService = new DatabaseService(LoginActivity.this);
@@ -268,7 +319,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 					for(int i = 0; i< jsonArray.length(); i++){
 						JSONObject info = jsonArray.getJSONObject(i);
 						Log.i("FRIEND", info.toString());
-						//ÏÈÖ»ÏÂÅóÓÑµÄĞÕÃû
+						//å…ˆåªä¸‹æœ‹å‹çš„å§“å
 						FriendUser friendUser = new FriendUser(info.getString("friendName"), info.getString("nick_name"), info.getString("pic_url"), info.getString("sex"), info.getString("address"), info.getString("signature"));
 						dbService.saveFriendInfo(friendUser);
 						download(info.getString("friendName"), "sync");
@@ -295,7 +346,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 					picDirFile.mkdir();
 				userPicFile = new File(sdCardDir+"/LeJianTempUserPic/"+fileName);
 				if(userPicFile.exists()){
-					//Ã¿´ÎÏÂÔØ¶¼¸üĞÂ
+					//æ¯æ¬¡ä¸‹è½½éƒ½æ›´æ–°
 					userPicFile.delete();
 				}
 				lejianUserPicPath = sdCardDir.getCanonicalPath()+"/LeJianTempUserPic/"+fileName;
@@ -305,20 +356,137 @@ public class LoginActivity extends Activity implements OnClickListener {
 		HttpUtils http = new HttpUtils();
 		HttpHandler handler = http.download(Constants.HOST_PIC_RESOURCE+fileName,
 				lejianUserPicPath,
-		    true, // Èç¹ûÄ¿±êÎÄ¼ş´æÔÚ£¬½Ó×ÅÎ´Íê³ÉµÄ²¿·Ö¼ÌĞøÏÂÔØ¡£·şÎñÆ÷²»Ö§³ÖRANGEÊ±½«´ÓĞÂÏÂÔØ¡£
-		    true, // Èç¹û´ÓÇëÇó·µ»ØĞÅÏ¢ÖĞ»ñÈ¡µ½ÎÄ¼şÃû£¬ÏÂÔØÍê³Éºó×Ô¶¯ÖØÃüÃû¡£
+		    true, // å¦‚æœç›®æ ‡æ–‡ä»¶å­˜åœ¨ï¼Œæ¥ç€æœªå®Œæˆçš„éƒ¨åˆ†ç»§ç»­ä¸‹è½½ã€‚æœåŠ¡å™¨ä¸æ”¯æŒRANGEæ—¶å°†ä»æ–°ä¸‹è½½ã€‚
+		    true, // å¦‚æœä»è¯·æ±‚è¿”å›ä¿¡æ¯ä¸­è·å–åˆ°æ–‡ä»¶åï¼Œä¸‹è½½å®Œæˆåè‡ªåŠ¨é‡å‘½åã€‚
 		    new RequestCallBack<File>() {
 		        @Override
 		        public void onSuccess(ResponseInfo<File> responseInfo) {
 		        	Log.d("DOWNLOAD", responseInfo.result.getPath());
-		        	Log.d("DOWNLOAD", "ÏÂÔØÓÃ»§Í¼Æ¬³É¹¦");
+		        	Log.d("DOWNLOAD", "ä¸‹è½½ç”¨æˆ·å›¾ç‰‡æˆåŠŸ");
 		        }
 		        @Override
 		        public void onFailure(HttpException error, String msg) {
-		        	Log.e("DOWNLOAD", "ÏÂÔØÓÃ»§Í¼Æ¬Ê§°Ü");
+		        	Log.e("DOWNLOAD", "ä¸‹è½½ç”¨æˆ·å›¾ç‰‡å¤±è´¥");
 		        }
 		});
-		//µ÷ÓÃcancel()·½·¨Í£Ö¹ÏÂÔØ
+		//è°ƒç”¨cancel()æ–¹æ³•åœæ­¢ä¸‹è½½
 //		handler.cancel();
 	}
+	
+	private class BaseUiListener implements IUiListener {
+
+		@Override
+		public void onComplete(Object response) {
+			Util.showResultDialog(LoginActivity.this, response.toString(),
+					"ç™»å½•æˆåŠŸ");
+			doComplete((JSONObject) response);
+		}
+
+		protected void doComplete(JSONObject values) {
+
+		}
+
+		@Override
+		public void onError(UiError e) {
+			Util.toastMessage(LoginActivity.this, "é”™è¯¯: " + e.errorDetail);
+			Util.dismissDialog();
+		}
+
+		@Override
+		public void onCancel() {
+//			Util.toastMessage(LoginActivity.this, "å–æ¶ˆ ");
+			Util.dismissDialog();
+		}
+	}
+	
+	private void updateUserInfo() {
+		if (mQQAuth != null && mQQAuth.isSessionValid()) {
+			IUiListener listener = new IUiListener() {
+
+				@Override
+				public void onError(UiError e) {
+				}
+
+				@Override
+				public void onComplete(final Object response) {
+					Message msg = new Message();
+					msg.obj = response;
+					Log.d("QQ", ""+response);
+					msg.what = 0;
+					mHandler.sendMessage(msg);
+					new Thread() {
+						@Override
+						public void run() {
+							JSONObject json = (JSONObject) response;
+							if (json.has("figureurl")) {
+								Bitmap bitmap = null;
+								try {
+									bitmap = Util.getbitmap(json
+											.getString("figureurl_qq_2"));
+								} catch (JSONException e) {
+
+								}
+								Message msg = new Message();
+								msg.obj = bitmap;
+								msg.what = 1;
+								mHandler.sendMessage(msg);
+							}
+						}
+
+					}.start();
+				}
+
+				@Override
+				public void onCancel() {
+				}
+			};
+			mInfo = new UserInfo(this, mQQAuth.getQQToken());
+			mInfo.getUserInfo(listener);
+
+		} else {
+			mUserInfo.setText("");
+			mUserInfo.setVisibility(android.view.View.GONE);
+			mUserLogo.setVisibility(android.view.View.GONE);
+		}
+	}
+
+	Handler mHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.what == 0) {
+				JSONObject response = (JSONObject) msg.obj;
+				if (response.has("nickname")) {
+					try {
+						mUserInfo.setVisibility(android.view.View.VISIBLE);
+						mUserInfo.setText(response.getString("nickname"));
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if(response.has("gender")){
+					try {
+						Log.d("QQ", ""+response.getString("gender"));
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if(response.has("privince")){
+					try {
+						Log.d("QQ", ""+response.getString("privince"));
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			} else if (msg.what == 1) {
+				Bitmap bitmap = (Bitmap) msg.obj;
+				mUserLogo.setImageBitmap(bitmap);
+				mUserLogo.setVisibility(android.view.View.VISIBLE);
+			}
+		}
+
+	};
 }

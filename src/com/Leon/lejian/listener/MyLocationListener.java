@@ -70,9 +70,12 @@ public class MyLocationListener implements BDLocationListener{
              sb.append("\naddr : ");  
              sb.append(location.getAddrStr());  
           }   
-        Log.i("log", sb.toString());  
+        Log.i("log", sb.toString());
         //将位置实时传到服务器
-        sendLocationToServer(location.getLatitude(), location.getLongitude());
+        //当有位置共享会话时，发送客户的地理位置到服务器端
+        if(Constants.getShareNum(context) > 0){
+        	sendLocationToServer(location.getLatitude(), location.getLongitude());
+        }
          testUser = RootUser.getInstance();
         testUser.setLocation(location);
         MyLocationData locData = new MyLocationData.Builder()

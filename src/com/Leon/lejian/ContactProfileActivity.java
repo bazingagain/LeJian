@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -25,6 +26,7 @@ import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.FriendUser;
 import com.Leon.lejian.bean.RootUser;
 import com.Leon.lejian.service.DatabaseService;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -63,6 +65,8 @@ public class ContactProfileActivity extends Activity implements OnClickListener 
 	}
 
 	private void initComponent(FriendUser user) {
+		ActionbarBackUtil.setActionbarBack(this, R.string.contactUser,
+				R.drawable.back_n);
 		contact_pic = (ImageView) findViewById(R.id.contact_pic);
 		contact_name = (TextView) findViewById(R.id.contact_name);
 		contact_nickname = (TextView) findViewById(R.id.contact_nickname);
@@ -85,6 +89,17 @@ public class ContactProfileActivity extends Activity implements OnClickListener 
 		contact_sex.setText(user.getSex());
 		contact_address.setText(user.getAddress());
 		contact_signature.setText(user.getSignature());
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

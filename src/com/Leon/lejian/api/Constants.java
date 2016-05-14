@@ -19,10 +19,10 @@ import com.Leon.lejian.bean.FriendUser;
 import com.Leon.lejian.bean.RootUser;
 
 public class Constants {
-//	public static final String HOST = "HTTP://182.254.234.35/myla/public";
-//	public static final String HOST_PIC_RESOURCE = "HTTP://182.254.234.35/myla/storage/app/userPic/";
-	public static final String HOST = "http://125.82.60.201/myla/public";
-	public static final String HOST_PIC_RESOURCE = "http://125.82.60.201/myla/storage/app/userPic/";
+	public static final String HOST = "HTTP://182.254.234.35/myla/public";
+	public static final String HOST_PIC_RESOURCE = "HTTP://182.254.234.35/myla/storage/app/userPic/";
+//	public static final String HOST = "http://125.82.62.208/myla/public";
+//	public static final String HOST_PIC_RESOURCE = "http://125.82.62.208/myla/storage/app/userPic/";
 	
 	public static final String REGISTER_PATH = "/userRegister";
 	public static final String LOGIN_PATH = "/userLogin";

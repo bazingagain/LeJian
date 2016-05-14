@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -16,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
@@ -36,6 +38,8 @@ public class UserSetting extends Activity implements OnClickListener{
 	}
 	
 	private void initComponent(){
+		ActionbarBackUtil.setActionbarBack(this, R.string.feedback,
+				R.drawable.back_n);
 		modify_password = (LinearLayout) findViewById(R.id.modify_password);
 		modify_password.setOnClickListener(this);
 		feedback = (LinearLayout) findViewById(R.id.feedback);
@@ -52,6 +56,17 @@ public class UserSetting extends Activity implements OnClickListener{
 		}else{
 			tempshareText.setText("ø™∆Ù¡Ÿ ±π≤œÌ");
 		}
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

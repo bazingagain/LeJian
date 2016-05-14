@@ -1,15 +1,18 @@
 package com.Leon.lejian;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cn.jpush.a.a.g;
+
+
+
+
 
 import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.RootUser;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -17,6 +20,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -27,14 +31,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,6 +64,7 @@ public class UserProfile extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_profile);
+		
 		initComponent();
 
 	}
@@ -72,7 +75,7 @@ public class UserProfile extends Activity implements OnClickListener {
 		updateProfile();
 	}
 
-	private void initComponent() {
+	@SuppressLint("NewApi") private void initComponent() {
 		user_icon = (LinearLayout) findViewById(R.id.user_icon);
 		user_nickname = (LinearLayout) findViewById(R.id.user_nickname);
 		user_sex = (LinearLayout) findViewById(R.id.user_sex);
@@ -85,7 +88,9 @@ public class UserProfile extends Activity implements OnClickListener {
 		user_address.setOnClickListener(this);
 		user_two_dimension_code.setOnClickListener(this);
 		user_signature.setOnClickListener(this);
-
+		//…Ë÷√œ‘ æ∑µªÿ
+		ActionbarBackUtil.setActionbarBack(this, R.string.app_user_profile, R.drawable.back_n);
+		
 		imgIcon = (ImageView) findViewById(R.id.icon);
 		textNickname = (TextView) findViewById(R.id.nickname);
 		textSex = (TextView) findViewById(R.id.sex);
@@ -144,6 +149,18 @@ public class UserProfile extends Activity implements OnClickListener {
 		if (str == null || str.length() == 0)
 			return true;
 		return false;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+				this.finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

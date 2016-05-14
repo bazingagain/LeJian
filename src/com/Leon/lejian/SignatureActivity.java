@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.RootUser;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -21,6 +22,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -36,10 +38,23 @@ public class SignatureActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ActionbarBackUtil.setActionbarBack(this, R.string.signature,
+				R.drawable.back_n);
 		setContentView(R.layout.signature);
 		saveBtn = (Button) findViewById(R.id.save_signature);
 		saveBtn.setOnClickListener(this);
 		signatureText = (EditText) findViewById(R.id.editText_signature);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

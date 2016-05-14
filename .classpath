@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="libs/zxing.jar"/>
 	<classpathentry kind="lib" path="libs/open_sdk.jar"/>
 	<classpathentry kind="lib" path="libs/mta-sdk-1.6.2.jar"/>
+	<classpathentry kind="lib" path="libs/BaiduTraceSDK_v2_1_9.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

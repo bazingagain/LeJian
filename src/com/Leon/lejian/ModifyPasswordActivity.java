@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -19,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -41,12 +43,25 @@ public class ModifyPasswordActivity extends Activity implements OnClickListener{
 	}
 	
 	private void initComponent(){
+		ActionbarBackUtil.setActionbarBack(this, R.string.modify_password,
+				R.drawable.back_n);
 		et_oldPassword = (EditText) findViewById(R.id.editText_oldPassword);
 		et_newPassword = (EditText) findViewById(R.id.editText_newPassword);
 		modifyBtn = (Button) findViewById(R.id.modifyBtn);
 		modifyBtn.setOnClickListener(this);
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 	@Override
 	public void onClick(View v) {
 		

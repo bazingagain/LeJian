@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.RootUser;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -20,6 +21,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
@@ -72,6 +74,8 @@ public class AddressActivity extends Activity implements OnClickListener {
 	}
 
 	private void initComponent() {
+		ActionbarBackUtil.setActionbarBack(this, R.string.location,
+				R.drawable.back_n);
 		addr_anhui = (LinearLayout) findViewById(R.id.addr_anhui);
 		addr_anhui.setOnClickListener(this);
 		addr_aomen = (LinearLayout) findViewById(R.id.addr_aomen);
@@ -138,6 +142,18 @@ public class AddressActivity extends Activity implements OnClickListener {
 		addr_yunnan.setOnClickListener(this);
 		addr_zhejiang = (LinearLayout) findViewById(R.id.addr_zhejiang);
 		addr_zhejiang.setOnClickListener(this);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

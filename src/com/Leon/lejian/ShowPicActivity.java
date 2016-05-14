@@ -23,6 +23,7 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -34,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.zhy.bean.ImageFloder;
 import com.zhy.imageloader.ListImageDirPopupWindow;
 import com.zhy.imageloader.ListImageDirPopupWindow.OnImageDirSelected;
@@ -138,6 +140,8 @@ public class ShowPicActivity extends Activity implements OnImageDirSelected,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.showpic);
+		ActionbarBackUtil.setActionbarBack(this, R.string.user_pic_label,
+				R.drawable.back_n);
 
 		DisplayMetrics outMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
@@ -147,6 +151,18 @@ public class ShowPicActivity extends Activity implements OnImageDirSelected,
 		getImages();
 	}
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	/**
 	 * 利用ContentProvider扫描手机中的图片，此方法在运行在子线程中 完成图片的扫描，最终获得jpg最多的那个文件夹
 	 */

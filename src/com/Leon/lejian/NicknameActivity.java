@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.RootUser;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -20,6 +21,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -36,9 +38,22 @@ public class NicknameActivity extends Activity implements OnClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.nickname);
+		ActionbarBackUtil.setActionbarBack(this, R.string.nickname,
+				R.drawable.back_n);
 		saveBtn = (Button) findViewById(R.id.save_nickname);
 		saveBtn.setOnClickListener(this);
 		nicknameText = (EditText) findViewById(R.id.editText_nickname);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

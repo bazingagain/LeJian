@@ -7,6 +7,7 @@ import com.Leon.lejian.api.Constants;
 import com.Leon.lejian.bean.FriendUser;
 import com.Leon.lejian.helper.FriendDatabaseHelper;
 import com.Leon.lejian.service.DatabaseService;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -22,6 +23,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -48,6 +50,8 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 	}
 
 	private void initView() {
+		ActionbarBackUtil.setActionbarBack(this, R.string.plus_add_friend,
+				R.drawable.back_n);
 		findBtn = (Button) findViewById(R.id.findBtn);
 		findBtn.setOnClickListener(this);
 		findUserName = (EditText) findViewById(R.id.find_username);
@@ -55,6 +59,17 @@ public class AddFriendsActivity extends Activity implements OnClickListener {
 			//设置默认的搜索人为扫码到的人
 			findUserName.setText(bundle.getString("barcode_result"));
 		}
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

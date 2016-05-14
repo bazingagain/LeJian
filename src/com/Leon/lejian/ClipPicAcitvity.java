@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -47,6 +48,8 @@ public class ClipPicAcitvity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_clippic);
+		ActionbarBackUtil.setActionbarBack(this, R.string.clip_pic,
+				R.drawable.back_n);
 		Intent intent = getIntent();
 		Bundle bundle = intent.getBundleExtra("pic_url");
 		imgPath = bundle.getString("pic_url");
@@ -54,6 +57,7 @@ public class ClipPicAcitvity extends Activity {
 		ImageLoader.getInstance(3, Type.LIFO).loadImage(imgPath,
 				mClipImageLayout.mZoomImageView);
 	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -64,6 +68,9 @@ public class ClipPicAcitvity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
 		case R.id.id_action_clip:
 			if (!Constants.isNetworkAvailable(this)) {
 				Toast.makeText(this, "Œﬁø…”√Õ¯¬Á", Toast.LENGTH_SHORT).show();

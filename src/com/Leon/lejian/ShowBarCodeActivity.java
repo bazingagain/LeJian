@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.Leon.lejian.api.Constants;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.google.zxing.WriterException;
 import com.google.zxing.qrcode.encoder.QRCode;
 import com.zxing.encoding.EncodingHandler;
@@ -28,6 +30,8 @@ public class ShowBarCodeActivity extends Activity{
 		initComponent();
 	}
 	private void initComponent(){
+		ActionbarBackUtil.setActionbarBack(this, R.string.barcode_label,
+				R.drawable.back_n);
 		SharedPreferences share = getSharedPreferences(
 				Constants.SHARE_USERINFO, MODE_PRIVATE);
 		myPicImg = (ImageView) findViewById(R.id.barcode_userPicImg);
@@ -50,6 +54,17 @@ public class ShowBarCodeActivity extends Activity{
 		}
 		nametv.setText(share.getString("app_user", null));
 		addresstv.setText("ÖÐ¹ú "+share.getString("app_user_address", null));
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 }

@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
+import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import com.Leon.lejian.AddFriendsActivity;
 import com.Leon.lejian.R;
+import com.Leon.lejian.util.ActionbarBackUtil;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.zxing.camera.CameraManager;
@@ -53,12 +55,25 @@ public class CaptureActivity extends Activity implements Callback {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.camera);
+		ActionbarBackUtil.setActionbarBack(this, R.string.title_activity_scan,
+				R.drawable.back_n);
 		//ViewUtil.addTopView(getApplicationContext(), this, R.string.scan_card);
 		CameraManager.init(getApplication());
 		viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
 		cancelScanButton = (Button) this.findViewById(R.id.btn_cancel_scan);
 		hasSurface = false;
 		inactivityTimer = new InactivityTimer(this);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
